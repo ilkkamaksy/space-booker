@@ -15,6 +15,8 @@ Registered users can view and manage bookings on the accounts they have access t
 
 ## Get started
 
+This app has a Python Flask application serving a REST API in the backend and a React app consuming the API in the front end. You can get started with development or test the app on your local machine with the following instructions.
+
 ### Install and run backend
 
 1. First, go to `/backend` folder and create an `.env` file and add the following variables:
