@@ -13,7 +13,11 @@ Booking calendars can be public, so anyone with a link to a booking calendar can
 
 Registered users can view and manage bookings on the accounts they have access to.
 
-## Get started
+## App in production
+
+Try out the [application running in Heroku](https://space-booker.herokuapp.com/).
+
+## Get started with development
 
 This app has a Python Flask application serving a REST API in the backend and a React app consuming the API in the front end. You can get started with development or test the app on your local machine with the following instructions.
 
