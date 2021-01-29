@@ -32,7 +32,7 @@ class Account(Resource):
 
 
 
-class AccountShow(Resource):
+class AccountSingular(Resource):
 
     @jwt_required()
     def get(self, id):
@@ -68,15 +68,7 @@ class AccountShow(Resource):
             return {
                 "message": 'Item not found'
             }, 404
-            
-        updatedAccount = {
-            "id": account.id,
-            "name": data.name,
-            "description": data.description,
-            "siteUrl": data.siteUrl,
-            "users": account.users
-        }
-
+        
         account.name = data['name']
         account.description = data['description']
         account.siteUrl = data['siteUrl']

@@ -3,9 +3,10 @@ from flask_restful import Api
 from flask_jwt import JWT, jwt_required, current_identity
 import os
 from config import config
-from resources.item import Item, ItemList 
 from resources.user import UserAccount
-from resources.account import Account, AccountShow
+from resources.account import Account, AccountSingular
+from resources.service import Service, ServiceSingular
+from resources.booking import Booking, BookingSingular, BookingList
 from security import authenticate, identity
 
 app = Flask(__name__)
@@ -27,10 +28,13 @@ def create_tables():
 jwt = JWT(app, authenticate, identity) 
 
 api.add_resource(UserAccount, '/register')
-api.add_resource(Item, '/items/<string:name>')
-api.add_resource(ItemList, '/items')
 api.add_resource(Account, '/accounts')
-api.add_resource(AccountShow, '/accounts/<int:id>')
+api.add_resource(AccountSingular, '/accounts/<int:id>')
+api.add_resource(Service, '/services')
+api.add_resource(ServiceSingular, '/services/<int:id>')
+api.add_resource(Booking, '/bookings', endpoint='booking_resource')
+api.add_resource(BookingSingular, '/bookings/<int:id>', endpoint='booking_singular_resource')
+api.add_resource(BookingList, '/bookings/service/<int:service_id>', endpoint='booking_by_services')
 
 @app.route('/me')
 @jwt_required()

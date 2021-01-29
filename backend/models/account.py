@@ -14,6 +14,7 @@ class AccountModel(db.Model):
     siteUrl = db.Column(db.String(200))
     description = db.Column(db.String(1000))
     users = db.relationship("UserModel", secondary=account_users)
+    services = db.relationship('ServiceModel', backref='account', lazy=True)
 
     def __init__(self, name, siteUrl, description):
         self.name = name
@@ -25,7 +26,8 @@ class AccountModel(db.Model):
             'name': self.name, 
             'siteUrl': self.siteUrl,
             'description': self.description,
-            'users': self.users
+            'users': self.users,
+            'services': self.services
         }
 
     @classmethod
