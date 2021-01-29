@@ -22,13 +22,7 @@ class Account(Resource):
             return {
                 "message": str(e)
             }, 500
-        return {
-            "id": account.id,
-            "name": account.name,
-            "siteUrl": account.siteUrl,
-            "description": account.description,
-            "users": [user.json() for user in account.users]
-        }, 201
+        return account.json(), 201
 
 
 
@@ -38,13 +32,7 @@ class AccountSingular(Resource):
     def get(self, id):
         account = AccountModel.find_by_id(id)
         if account:
-            return {
-                "id": account.id,
-                "name": account.name,
-                "siteUrl": account.siteUrl,
-                "description": account.description,
-                "users": [user.json() for user in account.users]
-            }
+            return account.json(), 201
         return {
             "message": 'Item not found'
         }, 404
@@ -73,12 +61,11 @@ class AccountSingular(Resource):
         account.description = data['description']
         account.siteUrl = data['siteUrl']
 
-        account.save_to_db()
+        try:
+            account.save_to_db()
+        except Exception as e:
+            return {
+                "message": str(e)
+            }, 500
 
-        return {
-            "id": account.id,
-            "name": account.name,
-            "siteUrl": account.siteUrl,
-            "description": account.description,
-            "users": [user.json() for user in account.users]
-        }, 201
+        return account.json(), 201

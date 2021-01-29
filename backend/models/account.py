@@ -23,10 +23,11 @@ class AccountModel(db.Model):
 
     def json(self):
         return {
+            'id': self.id,
             'name': self.name, 
             'siteUrl': self.siteUrl,
             'description': self.description,
-            'users': self.users,
+            'users': [user.json() for user in self.users],
             'services': self.services
         }
 

@@ -30,7 +30,6 @@ class Service(Resource):
 
 class ServiceSingular(Resource):
 
-    @jwt_required()
     def get(self, id):
         service = ServiceModel.find_by_id(id)
         if service:
@@ -70,3 +69,8 @@ class ServiceSingular(Resource):
 
         return service.json(), 201
         
+
+class ServiceList(Resource):
+
+    def get(self, account_id):
+        return [service.json() for service in ServiceModel.find_by_account(account_id)]

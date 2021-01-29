@@ -5,7 +5,7 @@ import os
 from config import config
 from resources.user import UserAccount
 from resources.account import Account, AccountSingular
-from resources.service import Service, ServiceSingular
+from resources.service import Service, ServiceSingular, ServiceList
 from resources.booking import Booking, BookingSingular, BookingList
 from security import authenticate, identity
 
@@ -32,6 +32,7 @@ api.add_resource(Account, '/accounts')
 api.add_resource(AccountSingular, '/accounts/<int:id>')
 api.add_resource(Service, '/services')
 api.add_resource(ServiceSingular, '/services/<int:id>')
+api.add_resource(ServiceList, '/services/account/<int:account_id>')
 api.add_resource(Booking, '/bookings', endpoint='booking_resource')
 api.add_resource(BookingSingular, '/bookings/<int:id>', endpoint='booking_singular_resource')
 api.add_resource(BookingList, '/bookings/service/<int:service_id>', endpoint='booking_by_services')
