@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useMutation } from 'react-query'
 import { Formik, Form, FormikProps } from 'formik'
 import {
 	Grid,
@@ -7,6 +8,7 @@ import {
 	makeStyles,
 	createStyles,
 } from '@material-ui/core'
+import { register } from '../../services/queries'
 
 import * as Yup from 'yup'
 
@@ -53,13 +55,13 @@ const stylesInUse = makeStyles((theme) =>
 	})
 )
 
-interface MyFormStatus {
+interface FormStatus {
   type: string
   message: string
 }
 
-interface MyFormStatusProps {
-  [key: string]: MyFormStatus
+interface FormStatusProps {
+  [key: string]: FormStatus
 }
 
 interface UserData {
@@ -69,51 +71,47 @@ interface UserData {
   confirmPassword: string
 }
 
-const formStatusProps: MyFormStatusProps = {
-	error: {
-		message: 'Registeration failed. Please try again.',
-		type: 'error',
-	},
+const formStatusProps: FormStatusProps = {
 	success: {
 		message: 'Registered successfully.',
 		type: 'success',
 	},
-	duplicate: {
-		message: 'Username already exists.',
+	error: {
+		message: 'Registeration failed: username already exists.',
 		type: 'error',
 	},
 }
 
 const Register = ():React.ReactElement => {
-	const [formStatus, setFormStatus] = useState<MyFormStatus>({
+	const [formStatus, setFormStatus] = useState<FormStatus>({
 		message: '',
 		type: '',
 	})
 	const classes = stylesInUse()
 	const [showFormStatus, setShowFormStatus] = useState(false)
+    
+	const mutation = useMutation(register)
 
-	const createNewAccount = async (
-		data: UserData
-	) => {
-		try {
-			await console.log({
-				variables: {
-					username: data.username,
-					email: data.email,
-					password: data.password,
-				},
-			})
-			setFormStatus(formStatusProps.success)
-			window.location.href = '/'
-		} catch (error) {
-			if (error.message.includes('duplicate key value violates unique constraint')) {
-				setFormStatus(formStatusProps.duplicate)
-			} else {
-				setFormStatus(formStatusProps.error)
-			}
-		}
-		setShowFormStatus(true)
+	const createNewAccount = async (userData: UserData) => {
+		mutation.mutate({
+			username: userData.username,
+			email: userData.email,
+			password: userData.password
+		})
 	}
+    
+	useEffect(() => {
+		if (mutation.isSuccess) {
+			setFormStatus(formStatusProps.success)
+			setShowFormStatus(true)
+		}
+    
+		if (mutation.isError) {
+			setFormStatus(formStatusProps.duplicate)
+			setShowFormStatus(true)
+		}
+	}, [mutation.isSuccess, mutation.isError])
+	
 
 	return (
 		<div className={classes.root}>

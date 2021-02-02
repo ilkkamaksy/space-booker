@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useMutation } from 'react-query'
 import * as Yup from 'yup'
 import { Formik, Form, FormikProps } from 'formik'
 import {
@@ -8,6 +9,7 @@ import {
 	makeStyles,
 	createStyles,
 } from '@material-ui/core'
+import { login } from '../../services/queries'
 
 const stylesInUse = makeStyles((theme) =>
 	createStyles({
@@ -49,10 +51,6 @@ const formStatusProps: FormStatusProps = {
 		message: 'Login failed. Please try again.',
 		type: 'error',
 	},
-	success: {
-		message: 'Login successful.',
-		type: 'success',
-	},
 }
 
 const Login = ():React.ReactElement => {
@@ -62,23 +60,27 @@ const Login = ():React.ReactElement => {
 	})
 	const classes = stylesInUse()
 	const [showFormStatus, setShowFormStatus] = useState(false)
+ 
+	const mutation = useMutation(login)
 
-	const logInUser = async (data: LoginFormFields) => {
-		try {
-			await console.log({
-				variables: {
-					username: data.username,
-					password: data.password,
-				},
-			})
-			setFormStatus(formStatusProps.success)
-			window.location.href = '/'
-		} catch (error) {
-			setFormStatus(formStatusProps.error)
-		}
-
-		setShowFormStatus(true)
+	const logInUser = async (userData: LoginFormFields) => {
+		mutation.mutate({
+			username: userData.username,
+			password: userData.password
+		})
 	}
+    
+	useEffect(() => {
+		if (mutation.isSuccess) {
+			localStorage.setItem('access_token', mutation.data?.data?.access_token ?? '')
+			window.location.href = '/'
+		}
+    
+		if (mutation.isError) {
+			setFormStatus(formStatusProps.duplicate)
+			setShowFormStatus(true)
+		}
+	}, [mutation.isSuccess, mutation.isError])
 
 	const UserSchema = Yup.object().shape({
 		username: Yup.string().required('Please enter your username.'),
@@ -164,15 +166,9 @@ const Login = ():React.ReactElement => {
 									</Button>
 									{showFormStatus && (
 										<div className="formStatus">
-											{formStatus.type === 'success' ? (
-												<p className={classes.successMessage}>
-													{formStatus.message}
-												</p>
-											) : formStatus.type === 'error' ? (
-												<p className={classes.errorMessage}>
-													{formStatus.message}
-												</p>
-											) : null}
+											<p className={classes.errorMessage}>
+												{formStatus.message}
+											</p>
 										</div>
 									)}
 								</Grid>

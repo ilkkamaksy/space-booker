@@ -7,12 +7,14 @@ import {
 	Toolbar,
 } from '@material-ui/core'
 import { Link as RouterLink } from 'react-router-dom'
+
 import { UserType } from '../types'
+
 import Logo from './Logo'
 
 interface Props {
-  user: UserType | undefined
-  logout: () => void
+	user: UserType|undefined,
+	logout: () => void
 }
 
 const stylesInUse = makeStyles(() =>
@@ -45,6 +47,7 @@ const stylesInUse = makeStyles(() =>
 		loginGreet: {
 			fontSize: '.95em',
 			marginRight: '1em',
+			color: '#000'
 		},
 		sectionLeft: {
 			flexGrow: 1,

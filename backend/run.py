@@ -18,7 +18,7 @@ else:
     app.config.from_object(config['development'])
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config['SECRET_KEY'] = 'super-secret'
+app.config['SECRET_KEY'] = os.environ.get("JWT_SECRET")
 
 api = Api(app, prefix='/api/v1')
     
@@ -44,10 +44,15 @@ api.add_resource(BookingList, '/bookings/service/<int:service_id>', endpoint='bo
 def index():
     return render_template('index.html')
 
-@app.route('/me')
+@app.route('/api/v1/me')
 @jwt_required()
 def protected():
-    return '%s' % current_identity.id
+    return  {
+        'id': current_identity.id,
+        'username': current_identity.username,
+        'email': current_identity.email
+    }
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

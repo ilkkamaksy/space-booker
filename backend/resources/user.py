@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
+import os
+import bcrypt
 
 class UserAccount(Resource):
     parser = reqparse.RequestParser()  
@@ -12,6 +14,10 @@ class UserAccount(Resource):
 
         if UserModel.find_by_username(data['username']):
             return {'message': 'User already exists, aborting.'}, 400
+
+        hashedPassword = bcrypt.hashpw(data.password.encode('utf8'), bcrypt.gensalt())
+        hashedPassword = hashedPassword.decode('utf8') # decode the hash to prevent is encoded twice
+        data.password = hashedPassword
 
         user = UserModel(**data)
         user.save_to_db()
