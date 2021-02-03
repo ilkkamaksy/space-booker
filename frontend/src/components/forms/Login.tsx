@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import { useMutation } from 'react-query'
 import * as Yup from 'yup'
 import { Formik, Form, FormikProps } from 'formik'
@@ -9,6 +11,12 @@ import {
 	makeStyles,
 	createStyles,
 } from '@material-ui/core'
+
+import { AppState } from '../../store/types'
+import { UserType } from '../../types'
+
+import { setToken, setUser } from '../../store/actions/user'
+
 import { login } from '../../services/queries'
 
 const stylesInUse = makeStyles((theme) =>
@@ -48,20 +56,38 @@ interface LoginFormFields {
 
 const formStatusProps: FormStatusProps = {
 	error: {
-		message: 'Login failed. Please try again.',
+		message: 'Invalid username or password. Please try again.',
 		type: 'error',
 	},
 }
 
-const Login = ():React.ReactElement => {
+const mapStateToProps = (state: AppState) => ({
+	token: state.userdata.token,
+	user: state.userdata.user
+})
+  
+type Props = ReturnType<typeof mapStateToProps>;
+
+interface DispatchProps { 
+    setToken: (token:string) => void,
+    setUser: (user:UserType) => void, 
+}
+
+const Login = ({ token, user, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
 	const [formStatus, setFormStatus] = useState<FormStatus>({
 		message: '',
 		type: '',
 	})
 	const classes = stylesInUse()
 	const [showFormStatus, setShowFormStatus] = useState(false)
- 
-	const mutation = useMutation(login)
+	const [redirect, setRedirect] = useState(false)
+
+	const mutation = useMutation(login, { 
+		onError: () => {
+			setFormStatus(formStatusProps.error)
+			setShowFormStatus(true)
+		}
+	})
 
 	const logInUser = async (userData: LoginFormFields) => {
 		mutation.mutate({
@@ -71,16 +97,16 @@ const Login = ():React.ReactElement => {
 	}
     
 	useEffect(() => {
-		if (mutation.isSuccess) {
+		if (mutation.isSuccess && !mutation.isLoading) {
 			localStorage.setItem('access_token', mutation.data?.data?.access_token ?? '')
-			window.location.href = '/'
+			setToken(mutation.data?.data?.access_token ?? '')
+			setRedirect(true)
 		}
-    
-		if (mutation.isError) {
-			setFormStatus(formStatusProps.duplicate)
-			setShowFormStatus(true)
-		}
-	}, [mutation.isSuccess, mutation.isError])
+	}, [mutation])
+
+	if (redirect && mutation.isSuccess || user?.username) {
+		return <Redirect to="/" />
+	}
 
 	const UserSchema = Yup.object().shape({
 		username: Yup.string().required('Please enter your username.'),
@@ -181,4 +207,7 @@ const Login = ():React.ReactElement => {
 	)
 }
 
-export default Login
+export default connect(mapStateToProps, {
+	setToken,
+	setUser
+})(Login)

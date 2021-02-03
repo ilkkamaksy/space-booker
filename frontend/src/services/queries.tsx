@@ -3,7 +3,7 @@ import { UseMutationResult, UseQueryResult } from 'react-query'
 import { RegisterUserInput, UserType, AuthToken, LoginUserInput } from '../types'
 import { API_URL, API_PREFIX } from '../utils/config'
 
-export function register(user: RegisterUserInput):Promise<UserType> {
+export function register(user: RegisterUserInput):Promise<UseMutationResult<AuthToken, Error>> {
 	return axios.post(`${API_URL}/${API_PREFIX}/register`, user)
 }
 

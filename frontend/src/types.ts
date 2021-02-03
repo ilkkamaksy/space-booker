@@ -1,6 +1,6 @@
 export interface UserType {
-    username: string
-    email: string
+    username: string|undefined
+    email: string|undefined
 }
 
 export interface RegisterUserInput {

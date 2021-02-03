@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
 import { useMutation } from 'react-query'
 import { Formik, Form, FormikProps } from 'formik'
 import {
@@ -8,7 +10,12 @@ import {
 	makeStyles,
 	createStyles,
 } from '@material-ui/core'
-import { register } from '../../services/queries'
+import { register, login } from '../../services/queries'
+
+import { AppState } from '../../store/types'
+import { UserType } from '../../types'
+
+import { setToken, setUser } from '../../store/actions/user'
 
 import * as Yup from 'yup'
 
@@ -77,41 +84,90 @@ const formStatusProps: FormStatusProps = {
 		type: 'success',
 	},
 	error: {
-		message: 'Registeration failed: username already exists.',
+		message: 'Registeration failed: username or email already registered.',
 		type: 'error',
 	},
 }
 
-const Register = ():React.ReactElement => {
+const mapStateToProps = (state: AppState) => ({
+	token: state.userdata.token,
+	user: state.userdata.user
+})
+  
+type Props = ReturnType<typeof mapStateToProps>;
+
+interface DispatchProps { 
+    setToken: (token:string) => void,
+    setUser: (user:UserType) => void, 
+}
+
+const Register = ({ token, user, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
+
 	const [formStatus, setFormStatus] = useState<FormStatus>({
 		message: '',
 		type: '',
 	})
-	const classes = stylesInUse()
 	const [showFormStatus, setShowFormStatus] = useState(false)
-    
-	const mutation = useMutation(register)
+	const [userdata, setUserdata] = useState({ username: '', password: ''})
+
+	const [redirect, setRedirect] = useState(false)
+
+	const classes = stylesInUse()
+	
+	const registerMutation = useMutation(register, {
+		onError: () => {
+			setFormStatus(formStatusProps.error)
+			setShowFormStatus(true)
+		}, 
+		onSuccess: () => {
+			setFormStatus(formStatusProps.success)
+			setShowFormStatus(true)
+		}
+	})
 
 	const createNewAccount = async (userData: UserData) => {
-		mutation.mutate({
+		
+		registerMutation.mutate({
 			username: userData.username,
 			email: userData.email,
 			password: userData.password
 		})
+
+		setUserdata({ 
+			username: userData.username, 
+			password: userData.password 
+		})
 	}
-    
+
+	const loginMutation = useMutation(login, { 
+		onError: () => {
+			setFormStatus(formStatusProps.error)
+			setShowFormStatus(true)
+		}
+	})
+
+	const logInUser = async (userData: { username: string, password: string }) => {
+		loginMutation.mutate({
+			username: userData.username,
+			password: userData.password
+		})
+	}
+
 	useEffect(() => {
-		if (mutation.isSuccess) {
-			setFormStatus(formStatusProps.success)
-			setShowFormStatus(true)
+		if (registerMutation.isSuccess && userdata.username && userdata.password && !loginMutation.isLoading) {
+			logInUser(userdata)
 		}
-    
-		if (mutation.isError) {
-			setFormStatus(formStatusProps.duplicate)
-			setShowFormStatus(true)
-		}
-	}, [mutation.isSuccess, mutation.isError])
 	
+		if (loginMutation.isSuccess) {
+			localStorage.setItem('access_token', loginMutation.data?.data?.access_token ?? '')
+			setToken(loginMutation.data?.data?.access_token ?? '')
+			setRedirect(true)
+		}
+	}, [registerMutation, user, loginMutation])
+
+	if (redirect || user?.username) {
+		return <Redirect to="/" />
+	}
 
 	return (
 		<div className={classes.root}>
@@ -257,4 +313,7 @@ const Register = ():React.ReactElement => {
 	)
 }
 
-export default Register
+export default connect(mapStateToProps, {
+	setToken,
+	setUser
+})(Register)

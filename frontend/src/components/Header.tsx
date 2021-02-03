@@ -14,7 +14,6 @@ import Logo from './Logo'
 
 interface Props {
 	user: UserType|undefined,
-	logout: () => void
 }
 
 const stylesInUse = makeStyles(() =>
@@ -59,9 +58,14 @@ const stylesInUse = makeStyles(() =>
 	})
 )
 
-const Header = ({ user, logout }: Props):React.ReactElement => {
+const Header = ({ user }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
+
+	const logout = () => {
+		localStorage.removeItem('access_token')
+		window.location.href = '/'
+	}
 
 	return (
 		<div className={classes.root}>
