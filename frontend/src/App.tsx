@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 import configureStore from './store/store'
+
 import Wrapper from './components/Wrapper'
 
 const store = configureStore()

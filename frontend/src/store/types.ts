@@ -1,4 +1,4 @@
-import { UserType } from '../types'
+import { UserType, Account } from '../types'
 
 export interface UserState {
     user: UserType|undefined,
@@ -27,6 +27,25 @@ export interface LogoutAction {
 
 export type UserActionTypes = SetTokenAction | SetUserAction
 
+
+
+export interface AccountState {
+    accounts: Account[]
+}
+
+export interface AddAccountAction {
+    type: '@prefix/ADD_ACCOUNT'
+    payload: Account
+}
+
+export interface SetAccountsAction {
+    type: '@prefix/SET_ACCOUNTS'
+    payload: Account[]
+}
+
+export type AccountActionTypes = AddAccountAction | SetAccountsAction
+
 export interface AppState {
     userdata: UserState
+    accountdata: AccountState
 }

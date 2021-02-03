@@ -4,7 +4,7 @@ from models.account import AccountModel
 from models.user import UserModel
 
 class Account(Resource):
-    parser = reqparse.RequestParser()  
+    parser = reqparse.RequestParser(bundle_errors=True)    
     parser.add_argument('name', type=str, required=True, help='Name cannot be empty')
     parser.add_argument('siteUrl', type=str)
     parser.add_argument('description', type=str)
@@ -24,6 +24,12 @@ class Account(Resource):
             }, 500
         return account.json(), 201
 
+    @jwt_required()
+    def get(self):
+
+        id = current_identity.id
+        return [account.json() for account in AccountModel.find_by_user_id(id)] 
+        
 
 
 class AccountSingular(Resource):

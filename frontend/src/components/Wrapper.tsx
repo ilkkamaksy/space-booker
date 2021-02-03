@@ -12,7 +12,11 @@ import Header from './Header'
 import Home from '../pages/Home'
 import Register from './forms/Register'
 import Login from './forms/Login'
+import Dashboard from '../pages/Dashboard'
+import EditAccount from './forms/EditAccount'
+
 import { UserType } from '../types'
+import Calendar from './Calendar'
     
 const mapStateToProps = (state: AppState) => ({
 	token: state.userdata.token,
@@ -50,6 +54,11 @@ const Wrapper = ({ token, user, setToken, setUser }: Props & DispatchProps):Reac
 			<Route exact path="/">
 				<Home />
 			</Route>
+
+			<Route exact path="/dashboard" component={Dashboard} />
+			<Route exact path="/add-account" component={EditAccount} />
+			<Route path='/account/:id' component={Calendar} />
+
 
 			<Route exact path="/register" component={Register} />
 			<Route exact path="/login" component={Login} />
