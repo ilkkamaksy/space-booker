@@ -10,7 +10,7 @@ from resources.service import Service, ServiceSingular, ServiceList
 from resources.booking import Booking, BookingSingular, BookingList
 from security import authenticate, identity
 
-app = Flask(__name__, static_folder="build/static", template_folder="build")
+app = Flask(__name__, static_folder="build/static", static_url_path='', template_folder="build")
 
 if os.environ.get("HEROKU"):
     app.config.from_object(config['production'])
