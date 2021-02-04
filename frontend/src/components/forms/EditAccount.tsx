@@ -6,16 +6,15 @@ import * as Yup from 'yup'
 import { Formik, Form, FormikProps } from 'formik'
 import {
 	Grid,
-	Container,
 	TextField,
 	Button,
 	makeStyles,
 	createStyles,
 } from '@material-ui/core'
 
-import { saveAccount } from '../../services/queries'
+import { saveAccount, updateAccount } from '../../services/queries'
 
-import { setAccounts, addAccount } from '../../store/actions/accounts'
+import { setAccounts, addAccount, startAction, setSingleAccount } from '../../store/actions/accounts'
 
 import { AppState } from '../../store/types'
 import { Account } from '../../types'
@@ -132,13 +131,19 @@ const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
 })
   
-type Props = ReturnType<typeof mapStateToProps>
+type StateProps = ReturnType<typeof mapStateToProps>
 
 interface DispatchProps { 
-    addAccount: (account:Account) => void, 
+	addAccount: (account:Account) => void, 
+	setSingleAccount: (account:Account) => void,
+	startAction: () => void
 }
 
-const EditAccount = ({ accountdata, addAccount }: Props & DispatchProps):React.ReactElement => {
+interface Props {
+	accountToEdit: Account|undefined
+}
+
+const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setSingleAccount }: StateProps & DispatchProps & Props):React.ReactElement => {
 
 	const history = useHistory()
 
@@ -155,7 +160,7 @@ const EditAccount = ({ accountdata, addAccount }: Props & DispatchProps):React.R
 		description: Yup.string(),
 	})
     
-	const mutation = useMutation(saveAccount, { 
+	const saveMutation = useMutation(saveAccount, { 
 		onError: () => {
 			setFormStatus(formStatusProps.error)
 			setShowFormStatus(true)
@@ -163,178 +168,200 @@ const EditAccount = ({ accountdata, addAccount }: Props & DispatchProps):React.R
 		onSuccess: () => {
 			setFormStatus(formStatusProps.success)
 			setShowFormStatus(true)
+			startAction()
+		}
+	})
+
+	const updateMutation = useMutation(updateAccount, { 
+		onError: () => {
+			setFormStatus(formStatusProps.error)
+			setShowFormStatus(true)
+		},
+		onSuccess: () => {
+			setFormStatus(formStatusProps.success)
+			setShowFormStatus(true)
+			startAction()
 		}
 	})
 
 	const saveAccountData = async (accountData: AccountFormFields) => {
-		mutation.mutate({
-			name: accountData.name,
-			siteUrl: accountData.siteUrl,
-			description: accountData.description
-		})
+		if (accountToEdit) {
+			updateMutation.mutate({
+				id: accountToEdit.id,
+				name: accountData.name,
+				siteUrl: accountData.siteUrl,
+				description: accountData.description
+			})
+		} else {
+			saveMutation.mutate({
+				name: accountData.name,
+				siteUrl: accountData.siteUrl,
+				description: accountData.description
+			})
+		}
 	}
 
 	useEffect(() => {
-		const newAccount = mutation.data?.data
-		if (mutation.isSuccess && !mutation.isLoading && newAccount && !accountdata.accounts.find(acc => acc.id === newAccount.id)) {
-			console.log('fired')
+		
+		const newAccount = saveMutation.data?.data
+	
+		if (
+			saveMutation.isSuccess &&
+			!saveMutation.isLoading && 
+			newAccount && 
+			accountdata.updating
+		) {
 			addAccount(newAccount)
 		}
-	}, [mutation, accountdata])
+
+		const updatedAccount = updateMutation.data?.data
+		if (
+			updateMutation.isSuccess &&
+			!updateMutation.isLoading &&
+			updatedAccount &&
+			accountdata.updating
+		) {
+			setSingleAccount(updatedAccount)
+		}		
+
+	}, [saveMutation, updateMutation, accountdata])
 
 	const handleClick = (path: string) => {
 		return () => {
 			history.push(path)
 		}
-	}
-    
-	console.log('save', mutation, accountdata)
-
+	}    
+	
 	return (
-		<div className={classes.root}>
-			<div className={classes.header}>
-				<Container maxWidth="xl">
-					<h1 className={classes.heading_1}>Add new organization</h1>
-				</Container>
-			</div>
+		<Formik
+			initialValues={{
+				name: accountToEdit ? accountToEdit.name : '',
+				siteUrl: accountToEdit ? accountToEdit.siteUrl : '',
+				description: accountToEdit ? accountToEdit.description : ''
+			}}
+			onSubmit={(values: AccountFormFields, actions) => {
+				saveAccountData(values)
+				setTimeout(() => {
+					actions.setSubmitting(false)
+				}, 400)
+			}}
+			validationSchema={AccountSchema}
+		>
+			{(props: FormikProps<AccountFormFields>) => {
+				const {
+					handleBlur,
+					handleChange,
+					values,
+					isSubmitting,
+					touched,
+					errors,
+				} = props
 
-			<div className={classes.content}>
-				<Container maxWidth="xl">
-					<h2 className={classes.heading_2}>General information</h2>
-					<p className={classes.introText}>
-						Add the name, website url and free description of your organization.
-					</p>
-					<Formik
-						initialValues={{
-							name: '',
-							siteUrl: '',
-							description: ''
-						}}
-						onSubmit={(values: AccountFormFields, actions) => {
-							saveAccountData(values)
-							setTimeout(() => {
-								actions.setSubmitting(false)
-							}, 400)
-						}}
-						validationSchema={AccountSchema}
-					>
-						{(props: FormikProps<AccountFormFields>) => {
-							const {
-								handleBlur,
-								handleChange,
-								values,
-								isSubmitting,
-								touched,
-								errors,
-							} = props
-
-							return (
+				return (
 						
 							
-								<Form>
-									<Grid container direction="row">
-										<Grid item className={classes.textField} xs={8}>
-											<TextField
-												id="name"
-												name="name"
-												type="text"
-												label="Organisation name"
-												value={values.name}
-												onChange={handleChange}
-												onBlur={handleBlur}
-												helperText={
-													touched.name && errors.name
-														? errors.name
-														: ''
-												}
-												error={touched.name && errors.name ? true : false}
-											/>
-										</Grid>
+					<Form>
+						<Grid container direction="row">
+							<Grid item className={classes.textField} xs={8}>
+								<TextField
+									id="name"
+									name="name"
+									type="text"
+									label="Organisation name"
+									value={values.name}
+									onChange={handleChange}
+									onBlur={handleBlur}
+									helperText={
+										touched.name && errors.name
+											? errors.name
+											: ''
+									}
+									error={touched.name && errors.name ? true : false}
+								/>
+							</Grid>
 
-										<Grid item className={classes.textField} xs={8}>
-											<TextField
-												id="siteUrl"
-												name="siteUrl"
-												type="siteUrl"
-												label="Website"
-												value={values.siteUrl}
-												onChange={handleChange}
-												onBlur={handleBlur}
-												helperText={
-													touched.siteUrl && errors.siteUrl
-														? errors.siteUrl
-														: ''
-												}
-												error={touched.siteUrl && errors.siteUrl ? true : false}
-											/>
-										</Grid>
+							<Grid item className={classes.textField} xs={8}>
+								<TextField
+									id="siteUrl"
+									name="siteUrl"
+									type="siteUrl"
+									label="Website"
+									value={values.siteUrl}
+									onChange={handleChange}
+									onBlur={handleBlur}
+									helperText={
+										touched.siteUrl && errors.siteUrl
+											? errors.siteUrl
+											: ''
+									}
+									error={touched.siteUrl && errors.siteUrl ? true : false}
+								/>
+							</Grid>
 
-										<Grid item className={classes.textField} xs={8}>
-											<TextField
-												id="description"
-												name="description"
-												type="description"
-												label="Description"
-												value={values.description}
-												onChange={handleChange}
-												onBlur={handleBlur}
-												helperText={
-													touched.description && errors.description
-														? errors.description
-														: ''
-												}
-												error={touched.description && errors.description ? true : false}
-											/>
-										</Grid>
+							<Grid item className={classes.textField} xs={8}>
+								<TextField
+									id="description"
+									name="description"
+									type="description"
+									label="Description"
+									value={values.description}
+									onChange={handleChange}
+									onBlur={handleBlur}
+									helperText={
+										touched.description && errors.description
+											? errors.description
+											: ''
+									}
+									error={touched.description && errors.description ? true : false}
+								/>
+							</Grid>
 
-										<Grid item className={classes.loginButton} xs={6}>
-											<Button
-												color="primary"
-												type="submit"
-												variant="contained"
-												disabled={isSubmitting}
-												className={classes.containedBtn}
-											>
-												{' '}
+							<Grid item className={classes.loginButton} xs={6}>
+								<Button
+									color="primary"
+									type="submit"
+									variant="contained"
+									disabled={isSubmitting}
+									className={classes.containedBtn}
+								>
+									{' '}
                                         Save
-											</Button>
+								</Button>
 
-											<Button
-												color="primary"
-												variant="outlined"
-												className={classes.outlinedBtn}
-												onClick={handleClick('/dashboard')}
-											>
-												{' '}
+								<Button
+									color="primary"
+									variant="outlined"
+									className={classes.outlinedBtn}
+									onClick={handleClick('/dashboard')}
+								>
+									{' '}
                             Cancel
-											</Button>
-											{showFormStatus && (
-												<div className="formStatus">
-													{formStatus.type === 'success' ? (
-														<p className={classes.successMessage}>
-															{formStatus.message}
-														</p>
-													) : formStatus.type === 'error' ? (
-														<p className={classes.errorMessage}>
-															{formStatus.message}
-														</p>
-													) : null}
-												</div>
-											)}
-										</Grid>
-									</Grid>
-								</Form>
-							)
-						}}			
-					</Formik>
-					
-				</Container>
-			</div>
-		</div>
+								</Button>
+								{showFormStatus && (
+									<div className="formStatus">
+										{formStatus.type === 'success' ? (
+											<p className={classes.successMessage}>
+												{formStatus.message}
+											</p>
+										) : formStatus.type === 'error' ? (
+											<p className={classes.errorMessage}>
+												{formStatus.message}
+											</p>
+										) : null}
+									</div>
+								)}
+							</Grid>
+						</Grid>
+					</Form>
+				)
+			}}			
+		</Formik>
 	)
 }
 
 export default connect(mapStateToProps, {
 	setAccounts,
-	addAccount
+	addAccount,
+	startAction,
+	setSingleAccount
 })(EditAccount)

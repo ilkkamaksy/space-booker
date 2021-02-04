@@ -30,6 +30,19 @@ export function saveAccount(account:AccountInput):Promise<UseMutationResult<Acco
 	return axios.post(`${API_URL}/${API_PREFIX}/accounts`, account, config)
 }
 
+export function updateAccount(account:Account):Promise<UseMutationResult<Account, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+
+	return axios.put(`${API_URL}/${API_PREFIX}/accounts/${account.id}`, account, config)
+}
+
 export function getAccounts():Promise<UseQueryResult<Account[], Error>> {
 	
 	const token = localStorage.getItem('access_token')

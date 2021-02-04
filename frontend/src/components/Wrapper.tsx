@@ -13,7 +13,7 @@ import Home from '../pages/Home'
 import Register from './forms/Register'
 import Login from './forms/Login'
 import Dashboard from '../pages/Dashboard'
-import EditAccount from './forms/EditAccount'
+import EditAccount from '../pages/EditAccount'
 
 import { UserType } from '../types'
 import Calendar from './Calendar'
@@ -54,7 +54,9 @@ const Wrapper = ({ token, user, setToken, setUser }: Props & DispatchProps):Reac
 			<Route exact path="/" component={Home} />
 			<Route exact path="/dashboard" component={Dashboard} />
 			<Route exact path="/add-account" component={EditAccount} />
-			<Route path='/account/:id' component={Calendar} />
+			<Route path='/account/:id/edit' component={EditAccount} />
+			<Route path='/account/:id/calendar' component={Calendar} />
+			<Route path='/account/:id/spaces' component={Calendar} />
 
 
 			<Route exact path="/register" component={Register} />

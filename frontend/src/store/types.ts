@@ -31,6 +31,7 @@ export type UserActionTypes = SetTokenAction | SetUserAction
 
 export interface AccountState {
     accounts: Account[]
+    updating: boolean
 }
 
 export interface AddAccountAction {
@@ -43,7 +44,20 @@ export interface SetAccountsAction {
     payload: Account[]
 }
 
-export type AccountActionTypes = AddAccountAction | SetAccountsAction
+export interface SetSingleAccountAction {
+    type: '@prefix/SET_SINGLE_ACCOUNT'
+    payload: Account
+}
+
+export interface InitAction {
+    type: '@prefix/START_ACTION'
+}
+
+export interface DoneAction {
+    type: '@prefix/DONE_ACTION'
+}
+
+export type AccountActionTypes = AddAccountAction | SetAccountsAction | SetSingleAccountAction | InitAction | DoneAction
 
 export interface AppState {
     userdata: UserState

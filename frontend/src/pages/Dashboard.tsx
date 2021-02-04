@@ -6,7 +6,13 @@ import {
 	Button,
 	createStyles,
 	makeStyles,
+	List,
+	ListItem,
+	ListItemText,
+	Link
 } from '@material-ui/core'
+import { Link as RouterLink } from 'react-router-dom'
+
 import { useHistory } from 'react-router-dom'
 
 import { getAccounts } from '../services/queries'
@@ -65,6 +71,11 @@ const stylesInUse = makeStyles(() =>
 			margin: '1rem 0 1.5rem',
 			color:'#111'
 		},
+		listTitle: {
+			fontSize: '1.2em',
+			fontWeight: 'bold',
+			color:'#000'
+		},
 		containedBtn: {
 			backgroundColor: '#6A0572',
 			padding: '12px 20px',
@@ -107,8 +118,6 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 		}
 	}, [query, accountdata])
 	
-	
-
 	return (
 		<div className={classes.root}>
 			
@@ -126,13 +135,58 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 				<Container maxWidth="xl">
 					<h2 className={classes.heading_2}>Your organizations</h2>
 				
-					{accountdata.accounts.length === 0 && 
-						<p className={classes.notice}>{'You haven\'t added any organizations yet. Add one to get started!'} </p>
+					{accountdata.accounts.length === 0 
+						? <p className={classes.notice}>{'You haven\'t added any organizations yet. Add one to get started!'} </p>
+						
+						: <List>
+							{accountdata.accounts.map(item => {
+								return (
+									<ListItem key={item.id}>
+										<ListItemText
+											className={classes.heading_2}
+											primary={
+												<React.Fragment>
+													<Link
+														className={classes.listTitle}
+														component={RouterLink}
+														to={`/account/${item.id}/spaces`}
+													>
+														{item.name}
+													</Link>
+												</React.Fragment>
+											}
+											secondary={
+												<React.Fragment>
+													<Link
+														component={RouterLink}
+														to={`/account/${item.id}/spaces`}
+													>
+														Edit spaces
+													</Link>
+													{' | '} 
+													<Link
+														component={RouterLink}
+														to={`/account/${item.id}/edit`}
+													>
+														Edit details
+													</Link>
+													{' | '} 
+													<Link
+														component={RouterLink}
+														to={`/account/${item.id}/calendar`}
+													>
+														View Calendar
+													</Link>	
+												</React.Fragment>
+											}
+										/>
+									</ListItem>
+								) 
+							})}
+						</List>
 					}
 
-					{accountdata.accounts.map(item => {
-						return <div key={item.id}>{item.name} - {item.id}</div>
-					})}
+					
 					<Button 
 						color="primary"
 						className={classes.containedBtn}
