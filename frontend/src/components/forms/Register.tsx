@@ -166,7 +166,7 @@ const Register = ({ token, user, setToken, setUser }: Props & DispatchProps):Rea
 	}, [registerMutation, user, loginMutation])
 
 	if (redirect || user?.username) {
-		return <Redirect to="/" />
+		return <Redirect to="/dashboard" />
 	}
 
 	return (

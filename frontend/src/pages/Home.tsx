@@ -1,6 +1,10 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import { Button, makeStyles, createStyles } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
+
+import { AppState } from '../store/types'
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -51,7 +55,18 @@ const stylesInUse = makeStyles(() =>
 	})
 )
 
-const Home = ():React.ReactElement => {
+const mapStateToProps = (state: AppState) => ({
+	user: state.userdata.user
+})
+
+type Props = ReturnType<typeof mapStateToProps>;
+
+const Home = ({ user }: Props):React.ReactElement => {
+
+	if (user?.username) {
+		return <Redirect to="/dashboard" />
+	}
+
 	const classes = stylesInUse()
 	const history = useHistory()
 
@@ -94,4 +109,4 @@ const Home = ():React.ReactElement => {
 	)
 }
 
-export default Home
+export default connect(mapStateToProps)(Home)

@@ -51,10 +51,7 @@ const Wrapper = ({ token, user, setToken, setUser }: Props & DispatchProps):Reac
 		<div>
 			<Header user={user} />
 
-			<Route exact path="/">
-				<Home />
-			</Route>
-
+			<Route exact path="/" component={Home} />
 			<Route exact path="/dashboard" component={Dashboard} />
 			<Route exact path="/add-account" component={EditAccount} />
 			<Route path='/account/:id' component={Calendar} />

@@ -2,12 +2,12 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { useQuery } from 'react-query'
 import {
+	Container,
 	Button,
 	createStyles,
-	Link,
 	makeStyles,
 } from '@material-ui/core'
-import { useHistory, Link as RouterLink } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 import { getAccounts } from '../services/queries'
 
@@ -19,12 +19,22 @@ import { Account } from '../types'
 const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
-			background: '#6A0572',
-			display: 'flex',
+			background: '#FFFFFF',
 			position: 'relative',
 			justifyContent: 'center',
 			alignItems: 'center',
-			height: 'calc(100vh - 64px)',
+
+		},
+		header: {
+			background: '#6A0572',
+			justifyContent: 'center',
+			alignItems: 'center',
+			paddingTop: '40px',
+			paddingBottom: '50px',
+			color:'#ffffff'
+		},
+		content: {
+
 		},
 		intro: {
 			color: '#ffffff',
@@ -32,35 +42,36 @@ const stylesInUse = makeStyles(() =>
 			position: 'relative',
 			zIndex: 1,
 		},
-		heading: {
-			fontSize: '4rem',
+		heading_1: {
+			fontSize: '3rem',
+			position: 'relative',
+			fontWeight: 'bold',
+			letterSpacing: -1,
+			margin: '1rem 0 0.5rem 0',
+		},
+		heading_2: {
+			fontSize: '2rem',
 			position: 'relative',
 			fontWeight: 'bold',
 			letterSpacing: -1,
 			marginBottom: '1rem',
 		},
 		introText: {
-			fontSize: '1.5rem',
-			marginTop: '0 auto 2rem',
+			fontSize: '1.2rem',
+			margin: '0.5rem auto 1rem',
+		},
+		notice: {
+			fontSize: '1em',
+			margin: '1rem 0 1.5rem',
+			color:'#111'
 		},
 		containedBtn: {
-			backgroundColor: '#df0cc4',
-			padding: '12px 0',
+			backgroundColor: '#6A0572',
+			padding: '12px 20px',
 			fontWeight: 'bold',
 			color: '#ffffff',
 			margin: '0 0.5em',
-			width: 180,
-		},
-		outlinedBtn: {
-			padding: '12px 0',
-			fontWeight: 'bold',
-			color: '#ffffff',
-			margin: '0 0.5em',
-			width: 180,
-			borderColor: 'rgba(255,255,255,0.5)',
-			'&:hover': {
-				borderColor: '#fff',
-			},
+			width: 'auto',
 		},
 	})
 )
@@ -96,25 +107,43 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 		}
 	}, [query, accountdata])
 	
-	console.log(query, accountdata)
+	
 
 	return (
 		<div className={classes.root}>
-			<div className={classes.intro}>
-				<h1 className={classes.heading}>Dashboard</h1>
-				<p className={classes.introText}>
-                    Create a booking calendar for your working spaces in a few seconds.
-				</p>
-				{accountdata.accounts.map(item => {
-					return <div key={item.id}>{item.name} - {item.id}</div>
-				})}
-				<Link
-					component={RouterLink}
-					to="/add-account"
-				>
-                    Add account info
-				</Link>
+			
+			<div className={classes.header}>
+				<Container maxWidth="xl">
+					<h1 className={classes.heading_1}>Dashboard</h1>
+					<p className={classes.introText}>
+						Manage your organizations and bookings.
+					</p>
+				</Container>
+			</div>
+			
+
+			<div className={classes.content}>
+				<Container maxWidth="xl">
+					<h2 className={classes.heading_2}>Your organizations</h2>
 				
+					{accountdata.accounts.length === 0 && 
+						<p className={classes.notice}>{'You haven\'t added any organizations yet. Add one to get started!'} </p>
+					}
+
+					{accountdata.accounts.map(item => {
+						return <div key={item.id}>{item.name} - {item.id}</div>
+					})}
+					<Button 
+						color="primary"
+						className={classes.containedBtn}
+						variant="contained"
+						disableElevation
+						onClick={handleClick('/add-account')}
+					>
+						Add new organization
+						
+					</Button>
+				</Container>
 			</div>
 		</div>
 	)

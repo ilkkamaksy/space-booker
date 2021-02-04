@@ -105,7 +105,7 @@ const Login = ({ token, user, setToken, setUser }: Props & DispatchProps):React.
 	}, [mutation])
 
 	if (redirect && mutation.isSuccess || user?.username) {
-		return <Redirect to="/" />
+		return <Redirect to="/dashboard" />
 	}
 
 	const UserSchema = Yup.object().shape({
