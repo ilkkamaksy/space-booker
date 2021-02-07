@@ -1,4 +1,6 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import {
 	AppBar,
 	createStyles,
@@ -8,13 +10,11 @@ import {
 } from '@material-ui/core'
 import { Link as RouterLink } from 'react-router-dom'
 
-import { UserType } from '../types'
+import { logoutUser } from '../store/actions/user'
+
+import { AppState } from '../store/types'
 
 import Logo from './Logo'
-
-interface Props {
-	user: UserType|undefined,
-}
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -58,13 +58,26 @@ const stylesInUse = makeStyles(() =>
 	})
 )
 
-const Header = ({ user }: Props):React.ReactElement => {
+const mapStateToProps = (state: AppState) => ({
+	user: state.userdata.user
+})
+  
+type Props = ReturnType<typeof mapStateToProps>;
+
+interface DispatchProps { 
+    logoutUser: () => void
+}
+
+const Header = ({ user, logoutUser }: Props & DispatchProps):React.ReactElement => {
 
 	const classes = stylesInUse()
 
+	const history = useHistory()
+
 	const logout = () => {
 		localStorage.removeItem('access_token')
-		window.location.href = '/'
+		logoutUser()
+		history.push('/')
 	}
 
 	return (
@@ -73,13 +86,15 @@ const Header = ({ user }: Props):React.ReactElement => {
 				<Toolbar>
 					<Logo />
 					<div className={classes.sectionLeft}>
+						{user && 
 						<Link
 							component={RouterLink}
 							className={classes.linkBtnTransparent}
 							to="/dashboard"
 						>
-                            Dashboard
+							Dashboard
 						</Link>
+						}
 					</div>
 					<div>
 						{!user && (
@@ -123,4 +138,6 @@ const Header = ({ user }: Props):React.ReactElement => {
 	)
 }
 
-export default Header
+export default connect(mapStateToProps, {
+	logoutUser
+})(Header)

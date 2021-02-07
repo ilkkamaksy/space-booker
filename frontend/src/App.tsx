@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 
 import configureStore from './store/store'
 
-import Wrapper from './components/Wrapper'
+import Controller from './components/Controller'
 
 const store = configureStore()
 
@@ -16,7 +16,7 @@ function App(): React.ReactElement  {
 		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
 			
-				<Wrapper />
+				<Controller />
 			
 			</QueryClientProvider>
 		</Provider>

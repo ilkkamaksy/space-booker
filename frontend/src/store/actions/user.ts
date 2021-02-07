@@ -18,9 +18,9 @@ export const setUser = (user:UserType):UserActionTypes =>  {
 	}
 }
 
-// export const setLogout = ():UserActionTypes =>  {
-// 	return {
-// 		type: LOGOUT,
-// 	}
-// }
+export const logoutUser = ():UserActionTypes =>  {
+	return {
+		type: '@prefix/LOGOUT_USER',
+	}
+}
 

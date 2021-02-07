@@ -14,9 +14,9 @@ import Register from './forms/Register'
 import Login from './forms/Login'
 import Dashboard from '../pages/Dashboard'
 import EditAccount from '../pages/EditAccount'
+import Calendar from './Calendar'
 
 import { UserType } from '../types'
-import Calendar from './Calendar'
     
 const mapStateToProps = (state: AppState) => ({
 	token: state.userdata.token,
@@ -30,7 +30,7 @@ interface DispatchProps {
     setUser: (user:UserType) => void, 
 }
 
-const Wrapper = ({ token, user, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
+const Controller = ({ token, user, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
     
 	const query = useQuery(['me', token], () => me(token), { 
 		enabled: !!token,
@@ -49,7 +49,7 @@ const Wrapper = ({ token, user, setToken, setUser }: Props & DispatchProps):Reac
 
 	return (
 		<div>
-			<Header user={user} />
+			<Header />
 
 			<Route exact path="/" component={Home} />
 			<Route exact path="/dashboard" component={Dashboard} />
@@ -68,4 +68,4 @@ const Wrapper = ({ token, user, setToken, setUser }: Props & DispatchProps):Reac
 export default connect(mapStateToProps, {
 	setToken,
 	setUser
-})(Wrapper)
+})(Controller)

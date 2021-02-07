@@ -21,11 +21,12 @@ export interface SetUserAction {
 
 export const LOGOUT = 'LOGOUT'
 
-export interface LogoutAction {
-    type: typeof LOGOUT
+export interface LogoutUserAction {
+    type: '@prefix/LOGOUT_USER'
 }
 
-export type UserActionTypes = SetTokenAction | SetUserAction
+
+export type UserActionTypes = SetTokenAction | SetUserAction | LogoutUserAction
 
 
 

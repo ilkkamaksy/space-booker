@@ -21,12 +21,12 @@ const userReducer = (state = initialState, action: UserActionTypes):UserState =>
 			...state,
 			user: action.payload,
 		}
-	// case LOGOUT :
-	// 	return {
-	// 		...state,
-	// 		user: undefined,
-	// 		token: undefined,
-	// 	}
+	case '@prefix/LOGOUT_USER' :
+		return {
+			...state,
+			user: undefined,
+			token: undefined,
+		}
 	default: return state
 	}
 }
