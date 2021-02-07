@@ -20,7 +20,6 @@ import { UserType } from '../types'
     
 const mapStateToProps = (state: AppState) => ({
 	token: state.userdata.token,
-	user: state.userdata.user
 })
   
 type Props = ReturnType<typeof mapStateToProps>;
@@ -30,7 +29,7 @@ interface DispatchProps {
     setUser: (user:UserType) => void, 
 }
 
-const Controller = ({ token, user, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
+const Controller = ({ token, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
     
 	const query = useQuery(['me', token], () => me(token), { 
 		enabled: !!token,

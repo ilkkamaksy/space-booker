@@ -13,7 +13,6 @@ import {
 } from '@material-ui/core'
 
 import { AppState } from '../../store/types'
-import { UserType } from '../../types'
 
 import { setToken, setUser } from '../../store/actions/user'
 
@@ -62,18 +61,16 @@ const formStatusProps: FormStatusProps = {
 }
 
 const mapStateToProps = (state: AppState) => ({
-	token: state.userdata.token,
 	user: state.userdata.user
 })
   
 type Props = ReturnType<typeof mapStateToProps>;
 
 interface DispatchProps { 
-    setToken: (token:string) => void,
-    setUser: (user:UserType) => void, 
+    setToken: (token:string) => void, 
 }
 
-const Login = ({ token, user, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
+const Login = ({ user, setToken }: Props & DispatchProps):React.ReactElement => {
 	const [formStatus, setFormStatus] = useState<FormStatus>({
 		message: '',
 		type: '',
