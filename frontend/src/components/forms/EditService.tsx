@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { useHistory, Redirect } from 'react-router-dom'
 import { useMutation } from 'react-query'
 import * as Yup from 'yup'
-import { Formik, Form, FormikProps } from 'formik'
+import { Formik, Form, FormikProps, Field } from 'formik'
 import {
 	Grid,
 	TextField,
@@ -142,13 +142,13 @@ interface DispatchProps {
 }
 
 interface Props {
-	spaceToEdit: Service|undefined,
+	serviceToEdit: Service|undefined,
     account: Account|undefined
 }
 
 const EditService = ({ 
 	accountdata, 
-	spaceToEdit, 
+	serviceToEdit, 
 	startAction, 
 	setSingleAccount,
 	account, 
@@ -201,9 +201,9 @@ const EditService = ({
 		if (!account) {
 			return
 		}
-		if (spaceToEdit) {
+		if (serviceToEdit) {
 			updateMutation.mutate({
-				id: spaceToEdit.id,
+				id: serviceToEdit.id,
 				name: data.name,
 				description: data.description,
 				maxBookings: data.maxBookings,
@@ -278,12 +278,12 @@ const EditService = ({
 	return (
 		<Formik
 			initialValues={{
-				name: spaceToEdit ? spaceToEdit.name : '',
-				description: spaceToEdit ? spaceToEdit.description : '',
-				maxBookings: spaceToEdit ? spaceToEdit.maxBookings : '',
-				startTime: spaceToEdit ? spaceToEdit.startTime : '',
-				endTime: spaceToEdit ? spaceToEdit.endTime : '',
-				timeSlotLen: spaceToEdit ? spaceToEdit.timeSlotLen : '',
+				name: serviceToEdit ? serviceToEdit.name : '',
+				description: serviceToEdit ? serviceToEdit.description : '',
+				maxBookings: serviceToEdit ? serviceToEdit.maxBookings : '',
+				startTime: serviceToEdit ? serviceToEdit.startTime : '',
+				endTime: serviceToEdit ? serviceToEdit.endTime : '',
+				timeSlotLen: serviceToEdit ? serviceToEdit.timeSlotLen : '',
 			}}
 			onSubmit={(values: SpaceFormFields, actions) => {
 				console.log('fired', values)

@@ -19,7 +19,7 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('JWT_SECRET')
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 api = Api(app, prefix='/api/v1')
     
 db.init_app(app)

@@ -106,6 +106,7 @@ interface DispatchProps {
 const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.ReactElement => {
 
 	const [addNewSpacePath, setAddNewSpacePath] = useState('/dashboard')
+	const [subTitle, setSubTitle] = useState('Your services')
 	const classes = stylesInUse()
 	const history = useHistory()	
 
@@ -126,6 +127,7 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 	useEffect(() => {
 		if (account) {
 			setAddNewSpacePath(`/account/${account.id}/services/add`)
+			setSubTitle(`Services for ${account.name}`)
 		}
 
 		if (
@@ -144,9 +146,9 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 			
 			<div className={classes.header}>
 				<Container maxWidth="xl">
-					<h1 className={classes.heading_1}>Spaces</h1>
+					<h1 className={classes.heading_1}>Manage services</h1>
 					<p className={classes.introText}>
-						Manage account spaces.
+						Manage account services.
 					</p>
 				</Container>
 			</div>
@@ -154,10 +156,10 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 
 			<div className={classes.content}>
 				<Container maxWidth="xl">
-					<h2 className={classes.heading_2}>spaces</h2>
+					<h2 className={classes.heading_2}>{subTitle}</h2>
 				
 					{account && account.services.length === 0 
-						? <p className={classes.notice}>{'You haven\'t added any organizations yet. Add one to get started!'} </p>
+						? <p className={classes.notice}>{'You haven\'t added any services yet. Add one to get started!'} </p>
 						
 						: <List>
 							{account && account.services.map(item => {
@@ -182,7 +184,7 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 														component={RouterLink}
 														to={`/account/${account.id}/services/${item.id}/edit`}
 													>
-														Edit space
+														Edit service
 													</Link>	
 												</React.Fragment>
 											}
@@ -201,7 +203,7 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 						disableElevation
 						onClick={handleClick(addNewSpacePath)}
 					>
-						Add new space
+						Add new service
 						
 					</Button>
 				</Container>

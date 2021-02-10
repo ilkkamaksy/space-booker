@@ -86,9 +86,9 @@ const EditService = ({ accountdata }: Props):React.ReactElement => {
 	}
 
 	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
-	const spaceToEdit = serviceId ? account?.services.find(service => service.id === parseInt(serviceId)) : undefined
+	const serviceToEdit = serviceId ? account?.services.find(service => service.id === parseInt(serviceId)) : undefined
 
-	console.log(accountId, serviceId, account, spaceToEdit)
+	console.log(accountId, serviceId, account, serviceToEdit)
 
 	const title = serviceId ? 'Edit space' : 'Add new space'
 
@@ -109,7 +109,7 @@ const EditService = ({ accountdata }: Props):React.ReactElement => {
 						Enter the space information.
 					</p>
 
-					<ServiceForm account={account} spaceToEdit={spaceToEdit} />
+					<ServiceForm account={account} serviceToEdit={serviceToEdit} />
 					
 				</Container>
 			</div>
