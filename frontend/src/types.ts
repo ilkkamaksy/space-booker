@@ -18,6 +18,27 @@ export interface AuthToken {
     access_token?: string
 }
 
+export interface ServiceInput {
+    name: string
+    description: string
+    maxBookings: number
+    startTime: string
+    endTime: string
+    timeSlotLen: number
+    account_id: number
+}
+
+export interface Service {
+    id: number
+    name: string
+    description: string
+    maxBookings: number
+    startTime: string
+    endTime: string
+    timeSlotLen: number
+    account_id: number
+}
+
 export interface AccountInput {
     name: string
     siteUrl: string
@@ -29,4 +50,5 @@ export interface Account {
     name: string
     siteUrl: string|undefined
     description: string|undefined
+    services: Service[]
 }

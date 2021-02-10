@@ -6,7 +6,7 @@ class ServiceModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.String(1000))
-    maxBookings = db.Column(db.Integer)
+    maxBookings = db.Column(db.Integer, nullable=False)
     startTime = db.Column(db.Time(), nullable=False)
     endTime = db.Column(db.Time(), nullable=False)
     timeSlotLen = db.Column(db.Integer, nullable=False)

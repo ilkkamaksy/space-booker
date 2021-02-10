@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import {
-	useParams
+	useParams,
+	Redirect
 } from 'react-router-dom'
 import {
 	Container,
@@ -11,7 +12,7 @@ import {
 
 import { AppState } from '../store/types'
 
-import AccountForm from '../components/forms/EditAccount'
+import ServiceForm from '../components/forms/EditService'
 
 const stylesInUse = makeStyles((theme) =>
 	createStyles({
@@ -66,7 +67,8 @@ const stylesInUse = makeStyles((theme) =>
 )
 
 interface RouteParams {
-	id: string|undefined
+	accountId: string|undefined
+    serviceId: string|undefined
 }
   
 const mapStateToProps = (state: AppState) => ({
@@ -75,12 +77,20 @@ const mapStateToProps = (state: AppState) => ({
   
 type Props = ReturnType<typeof mapStateToProps>
 
-const EditAccount = ({ accountdata }: Props):React.ReactElement => {
+const EditService = ({ accountdata }: Props):React.ReactElement => {
 
-	const { id } = useParams<RouteParams>()
+	const { accountId, serviceId } = useParams<RouteParams>()
 
-	const accountToEdit = id ? accountdata.accounts.find(acc => acc.id === parseInt(id)) : undefined
-	const title = id ? 'Edit organization' : 'Add new organization'
+	if (!accountId) {
+		<Redirect to="/dashboard" />
+	}
+
+	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
+	const spaceToEdit = serviceId ? account?.services.find(service => service.id === parseInt(serviceId)) : undefined
+
+	console.log(accountId, serviceId, account, spaceToEdit)
+
+	const title = serviceId ? 'Edit space' : 'Add new space'
 
 	const classes = stylesInUse()
 
@@ -96,14 +106,15 @@ const EditAccount = ({ accountdata }: Props):React.ReactElement => {
 				<Container maxWidth="xl">
 					<h2 className={classes.heading_2}>General information</h2>
 					<p className={classes.introText}>
-						Edit the name, website url and free description of your organization.
+						Enter the space information.
 					</p>
+
+					<ServiceForm account={account} spaceToEdit={spaceToEdit} />
 					
-					<AccountForm accountToEdit={accountToEdit} />
 				</Container>
 			</div>
 		</div>
 	)
 }
 
-export default connect(mapStateToProps)(EditAccount)
+export default connect(mapStateToProps)(EditService)

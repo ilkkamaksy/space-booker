@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { useQuery } from 'react-query'
 import {
@@ -11,9 +11,11 @@ import {
 	ListItemText,
 	Link
 } from '@material-ui/core'
-import { Link as RouterLink } from 'react-router-dom'
-
-import { useHistory } from 'react-router-dom'
+import { 
+	Link as RouterLink, 
+	useParams, 
+	useHistory,
+} from 'react-router-dom'
 
 import { getAccounts } from '../services/queries'
 
@@ -91,16 +93,24 @@ const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
 })
   
+interface RouteParams {
+	accountId: string|undefined
+}
+
 type Props = ReturnType<typeof mapStateToProps>
 
 interface DispatchProps { 
     setAccounts: (accounts:Account[]) => void
 }
 
-const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.ReactElement => {
+const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.ReactElement => {
 
+	const [addNewSpacePath, setAddNewSpacePath] = useState('/dashboard')
 	const classes = stylesInUse()
-	const history = useHistory()
+	const history = useHistory()	
+
+	const { accountId } = useParams<RouteParams>()
+	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
 
 	const handleClick = (path: string) => {
 		return () => {
@@ -108,24 +118,35 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 		}
 	}
 
-	const query = useQuery(['getAccounts', accountdata], getAccounts, { 
+	const queryAccounts = useQuery(['getAccounts', accountdata], getAccounts, { 
 		enabled: accountdata.accounts.length === 0,
 	})
 
+
 	useEffect(() => {
-		if (query.isSuccess && accountdata.accounts.length === 0 && query.data.data) {
-			setAccounts(query.data.data)
+		if (account) {
+			setAddNewSpacePath(`/account/${account.id}/services/add`)
 		}
-	}, [query, accountdata])
-	
+
+		if (
+			!account &&
+			queryAccounts.isSuccess && 
+            accountdata.accounts.length === 0 && 
+            queryAccounts.data.data
+		) {
+			setAccounts(queryAccounts.data.data)
+		}
+
+	}, [queryAccounts, accountdata, account])
+
 	return (
 		<div className={classes.root}>
 			
 			<div className={classes.header}>
 				<Container maxWidth="xl">
-					<h1 className={classes.heading_1}>Dashboard</h1>
+					<h1 className={classes.heading_1}>Spaces</h1>
 					<p className={classes.introText}>
-						Manage your organizations and bookings.
+						Manage account spaces.
 					</p>
 				</Container>
 			</div>
@@ -133,13 +154,13 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 
 			<div className={classes.content}>
 				<Container maxWidth="xl">
-					<h2 className={classes.heading_2}>Your organizations</h2>
+					<h2 className={classes.heading_2}>spaces</h2>
 				
-					{accountdata.accounts.length === 0 
+					{account && account.services.length === 0 
 						? <p className={classes.notice}>{'You haven\'t added any organizations yet. Add one to get started!'} </p>
 						
 						: <List>
-							{accountdata.accounts.map(item => {
+							{account && account.services.map(item => {
 								return (
 									<ListItem key={item.id}>
 										<ListItemText
@@ -149,7 +170,7 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 													<Link
 														className={classes.listTitle}
 														component={RouterLink}
-														to={`/account/${item.id}/services`}
+														to={`/account/${account.id}/services/${item.id}/edit`}
 													>
 														{item.name}
 													</Link>
@@ -159,23 +180,9 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 												<React.Fragment>
 													<Link
 														component={RouterLink}
-														to={`/account/${item.id}/services`}
+														to={`/account/${account.id}/services/${item.id}/edit`}
 													>
-														Edit services
-													</Link>
-													{' | '} 
-													<Link
-														component={RouterLink}
-														to={`/account/${item.id}/edit`}
-													>
-														Edit details
-													</Link>
-													{' | '} 
-													<Link
-														component={RouterLink}
-														to={`/account/${item.id}/calendar`}
-													>
-														View Calendar
+														Edit space
 													</Link>	
 												</React.Fragment>
 											}
@@ -192,9 +199,9 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 						className={classes.containedBtn}
 						variant="contained"
 						disableElevation
-						onClick={handleClick('/add-account')}
+						onClick={handleClick(addNewSpacePath)}
 					>
-						Add new organization
+						Add new space
 						
 					</Button>
 				</Container>
@@ -205,4 +212,4 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 
 export default connect(mapStateToProps, {
 	setAccounts
-})(Dashboard)
+})(Services)

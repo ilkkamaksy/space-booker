@@ -28,7 +28,7 @@ class AccountModel(db.Model):
             'siteUrl': self.siteUrl,
             'description': self.description,
             'users': [user.json() for user in self.users],
-            'services': self.services
+            'services': [service.json() for service in self.services]
         }
 
     @classmethod

@@ -14,6 +14,8 @@ import Register from './forms/Register'
 import Login from './forms/Login'
 import Dashboard from '../pages/Dashboard'
 import EditAccount from '../pages/EditAccount'
+import Services from '../pages/Services'
+import EditService from '../pages/EditService'
 import Calendar from './Calendar'
 
 import { UserType } from '../types'
@@ -55,7 +57,9 @@ const Controller = ({ token, setToken, setUser }: Props & DispatchProps):React.R
 			<Route exact path="/add-account" component={EditAccount} />
 			<Route path='/account/:id/edit' component={EditAccount} />
 			<Route path='/account/:id/calendar' component={Calendar} />
-			<Route path='/account/:id/spaces' component={Calendar} />
+			<Route exact path='/account/:accountId/services' component={Services} />
+			<Route path='/account/:accountId/services/add' component={EditService} />
+			<Route path='/account/:accountId/services/:serviceId/edit' component={EditService} />
 
 
 			<Route exact path="/register" component={Register} />

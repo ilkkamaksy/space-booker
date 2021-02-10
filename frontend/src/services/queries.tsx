@@ -6,7 +6,10 @@ import {
 	AuthToken, 
 	LoginUserInput,
 	AccountInput,
-	Account
+	Account,
+	Service,
+	ServiceInput
+
 } from '../types'
 import { API_URL, API_PREFIX } from '../utils/config'
 
@@ -54,6 +57,48 @@ export function getAccounts():Promise<UseQueryResult<Account[], Error>> {
 	}
 	return axios.get(`${API_URL}/${API_PREFIX}/accounts`, config)
 }
+
+
+export function saveService(service:ServiceInput):Promise<UseMutationResult<Service, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+	return axios.post(`${API_URL}/${API_PREFIX}/services`, service, config)
+}
+
+export function updateService(service:Service):Promise<UseMutationResult<Service, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+
+	return axios.put(`${API_URL}/${API_PREFIX}/services/${service.id}`, service, config)
+}
+
+export function getServices(account:Account|undefined):Promise<UseQueryResult<Service[], Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+
+	const accountId = account ? account.id : -1
+	
+	return axios.get(`${API_URL}/${API_PREFIX}/services/account/${accountId}`, config)
+}
+
 
 export function me(token:string|undefined):Promise<UseQueryResult<UserType, Error>> {
 	const config = {
