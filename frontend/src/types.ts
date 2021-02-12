@@ -18,6 +18,24 @@ export interface AuthToken {
     access_token?: string
 }
 
+export interface Booking {
+    id?: number
+    email: string
+    date: string
+    slotNumber: number
+    service_id: number
+}
+
+export interface BookingAttributesType {
+	id: number
+	slotNumber: number
+	time: string
+	isReserved?: boolean
+	isSelected?: boolean
+	service: Service
+	date: Date|null
+}
+
 export interface ServiceInput {
     name: string
     description: string

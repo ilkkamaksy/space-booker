@@ -8,8 +8,8 @@ import {
 	AccountInput,
 	Account,
 	Service,
-	ServiceInput
-
+	ServiceInput,
+	Booking
 } from '../types'
 import { API_URL, API_PREFIX } from '../utils/config'
 
@@ -58,6 +58,18 @@ export function getAccounts():Promise<UseQueryResult<Account[], Error>> {
 	return axios.get(`${API_URL}/${API_PREFIX}/accounts`, config)
 }
 
+export function getAccountById(id:string|undefined):Promise<UseQueryResult<Account, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+	return axios.get(`${API_URL}/${API_PREFIX}/accounts/${id}`, config)
+}
+
 
 export function saveService(service:ServiceInput):Promise<UseMutationResult<Service, Error>> {
 	
@@ -99,6 +111,32 @@ export function getServices(account:Account|undefined):Promise<UseQueryResult<Se
 	return axios.get(`${API_URL}/${API_PREFIX}/services/account/${accountId}`, config)
 }
 
+export function saveBooking(booking:Booking):Promise<UseMutationResult<Booking, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+	return axios.post(`${API_URL}/${API_PREFIX}/bookings`, booking, config)
+}
+
+export function getBookingsByService(service:Service|undefined):Promise<UseQueryResult<Booking[], Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+
+	const serviceId = service ? service.id : -1
+	
+	return axios.get(`${API_URL}/${API_PREFIX}/bookings/service/${serviceId}`, config)
+}
 
 export function me(token:string|undefined):Promise<UseQueryResult<UserType, Error>> {
 	const config = {

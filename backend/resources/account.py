@@ -34,7 +34,6 @@ class Account(Resource):
 
 class AccountSingular(Resource):
 
-    @jwt_required()
     def get(self, id):
         account = AccountModel.find_by_id(id)
         if account:

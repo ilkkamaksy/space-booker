@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { useHistory, Redirect } from 'react-router-dom'
 import { useMutation } from 'react-query'
 import * as Yup from 'yup'
-import { Formik, Form, FormikProps, Field } from 'formik'
+import { Formik, Form, FormikProps } from 'formik'
 import {
 	Grid,
 	TextField,
@@ -286,7 +286,6 @@ const EditService = ({
 				timeSlotLen: serviceToEdit ? serviceToEdit.timeSlotLen : '',
 			}}
 			onSubmit={(values: SpaceFormFields, actions) => {
-				console.log('fired', values)
 				saveServiceData(values)
 				setTimeout(() => {
 					actions.setSubmitting(false)

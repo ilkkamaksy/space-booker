@@ -1,4 +1,4 @@
-import { UserType, Account } from '../types'
+import { UserType, Account, Booking } from '../types'
 
 export interface UserState {
     user: UserType|undefined,
@@ -60,7 +60,36 @@ export interface DoneAction {
 
 export type AccountActionTypes = AddAccountAction | SetAccountsAction | SetSingleAccountAction | InitAction | DoneAction
 
+export interface AddBookingAction {
+    type: '@prefix/ADD_BOOKING'
+    payload: Booking
+}
+
+export interface SetBookingsAction {
+    type: '@prefix/SET_BOOKINGS'
+    payload: Booking[]
+}
+
+export interface SetDateAction {
+    type: '@prefix/SET_SELECTED_DATE'
+    payload: Date | null
+}
+
+export interface SetFormVisibilityAction {
+    type: '@prefix/SET_FORM_VISIBILITY'
+}
+
+export type BookingActionTypes = InitAction | AddBookingAction | SetBookingsAction | SetDateAction | SetFormVisibilityAction
+
+export interface BookingState {
+    bookings: Booking[]
+    updating: boolean
+    selectedDate: Date | null,
+    bookingFormVisible: boolean
+}
+
 export interface AppState {
     userdata: UserState
     accountdata: AccountState
+    bookingData: BookingState
 }

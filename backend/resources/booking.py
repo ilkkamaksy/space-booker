@@ -4,10 +4,10 @@ from models.booking import BookingModel
 
 class Booking(Resource):
     parser = reqparse.RequestParser(bundle_errors=True)  
-    parser.add_argument('email', type=str, location='form', required=True, help='Email cannot be empty')
-    parser.add_argument('date', location='form', type=lambda x: inputs.date(x), required=True, help='Date cannot be empty')
-    parser.add_argument('slotNumber', location='form', type=int, required=True, help='Time slot cannot be empty')
-    parser.add_argument('service_id', location='form', type=int, required=True, help='Service id cannot be empty')
+    parser.add_argument('email', type=str, required=True, help='Email cannot be empty')
+    parser.add_argument('date', type=lambda x: inputs.date(x), required=True, help='Date cannot be empty')
+    parser.add_argument('slotNumber', type=int, required=True, help='Time slot cannot be empty')
+    parser.add_argument('service_id', type=int, required=True, help='Service id cannot be empty')
 
     def post(self):
         
