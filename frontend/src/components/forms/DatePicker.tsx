@@ -34,6 +34,7 @@ const DatePickerComponent = ({ selectedDate, setSelectedDate }: StateProps & Dis
 				variant="inline"
 				inputVariant="standard"
 				label="Date"
+				autoOk={true}
 			/>
 		</MuiPickersUtilsProvider>
 	)

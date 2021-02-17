@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { useHistory, Redirect } from 'react-router-dom'
 import { useMutation } from 'react-query'
 import * as Yup from 'yup'
-import { Formik, Form, FormikProps } from 'formik'
+import { Formik, Form, FormikProps, Field } from 'formik'
 import {
 	Grid,
 	TextField,
@@ -11,6 +11,11 @@ import {
 	makeStyles,
 	createStyles,
 } from '@material-ui/core'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+
+import { TimePicker } from 'formik-material-ui-pickers'
+
+import DateFnsUtils from '@date-io/date-fns'
 
 import { saveService, updateService } from '../../services/queries'
 
@@ -18,6 +23,7 @@ import { startAction, setSingleAccount } from '../../store/actions/accounts'
 
 import { AppState } from '../../store/types'
 import { Service, Account } from '../../types'
+
 
 const stylesInUse = makeStyles((theme) =>
 	createStyles({
@@ -114,8 +120,8 @@ interface SpaceFormFields {
     name: string
     description: string
     maxBookings: number
-    startTime: string
-    endTime: string
+    startTime: Date
+    endTime: Date
     timeSlotLen: number
 }
 
@@ -207,8 +213,8 @@ const EditService = ({
 				name: data.name,
 				description: data.description,
 				maxBookings: data.maxBookings,
-				startTime: data.startTime,
-				endTime: data.endTime,
+				startTime: `${data.startTime.getHours()}:${data.startTime.getMinutes()}`,
+				endTime: `${data.endTime.getHours()}:${data.endTime.getMinutes()}`,
 				timeSlotLen: data.timeSlotLen,
 				account_id: account.id
 			})
@@ -217,15 +223,13 @@ const EditService = ({
 				name: data.name,
 				description: data.description,
 				maxBookings: data.maxBookings,
-				startTime: data.startTime,
-				endTime: data.endTime,
+				startTime: `${data.startTime.getHours()}:${data.startTime.getMinutes()}`,
+				endTime: `${data.endTime.getHours()}:${data.endTime.getMinutes()}`,
 				timeSlotLen: data.timeSlotLen,
 				account_id: account.id
 			})
 		}
 	}
-
-	console.log(account, saveMutation)
 
 	useEffect(() => {
 		
@@ -271,191 +275,204 @@ const EditService = ({
 		}
 	}    
 
+	const defaultStartTime = new Date()
+	defaultStartTime.setHours(9)
+	defaultStartTime.setMinutes(0)
+
+	const defaultEndTime = new Date()
+	defaultEndTime.setHours(17)
+	defaultEndTime.setMinutes(0)
+
+	const timeStrToDate = (timeStr:string):Date => {
+		const date = new Date()
+		const timeStrParts = timeStr.split(':')
+		date.setHours(parseInt(timeStrParts[0]))
+		date.setMinutes(parseInt(timeStrParts[1]))
+		return date
+	}
+
 	if (redirect) {
 		return <Redirect to={account ? `/account/${account.id}/services/` : '/dashboard'} />
 	}
 
 	return (
-		<Formik
-			initialValues={{
-				name: serviceToEdit ? serviceToEdit.name : '',
-				description: serviceToEdit ? serviceToEdit.description : '',
-				maxBookings: serviceToEdit ? serviceToEdit.maxBookings : '',
-				startTime: serviceToEdit ? serviceToEdit.startTime : '',
-				endTime: serviceToEdit ? serviceToEdit.endTime : '',
-				timeSlotLen: serviceToEdit ? serviceToEdit.timeSlotLen : '',
-			}}
-			onSubmit={(values: SpaceFormFields, actions) => {
-				saveServiceData(values)
-				setTimeout(() => {
-					actions.setSubmitting(false)
-				}, 400)
-			}}
-			validationSchema={SpaceSchema}
-		>
-			{(props: FormikProps<SpaceFormFields>) => {
-				const {
-					handleBlur,
-					handleChange,
-					values,
-					isSubmitting,
-					touched,
-					errors,
-				} = props
+		<MuiPickersUtilsProvider utils={DateFnsUtils}>
+			<Formik
+				initialValues={{
+					name: serviceToEdit ? serviceToEdit.name : '',
+					description: serviceToEdit ? serviceToEdit.description : '',
+					maxBookings: serviceToEdit ? serviceToEdit.maxBookings : '',
+					startTime: serviceToEdit ? timeStrToDate(serviceToEdit.startTime) : defaultStartTime,
+					endTime: serviceToEdit ? timeStrToDate(serviceToEdit.endTime) : defaultEndTime,
+					timeSlotLen: serviceToEdit ? serviceToEdit.timeSlotLen : '',
+				}}
+				onSubmit={(values: SpaceFormFields, actions) => {
+					saveServiceData(values)
+					setTimeout(() => {
+						actions.setSubmitting(false)
+					}, 400)
+				}}
+				validationSchema={SpaceSchema}
+			>
+				{(props: FormikProps<SpaceFormFields>) => {
+					const {
+						handleBlur,
+						handleChange,
+						values,
+						isSubmitting,
+						touched,
+						errors,
+					} = props
 
-				return (
+					return (
 						
 							
-					<Form>
-						<Grid container direction="row">
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="name"
-									name="name"
-									type="text"
-									label="Space name"
-									value={values.name}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.name && errors.name
-											? errors.name
-											: ''
-									}
-									error={touched.name && errors.name ? true : false}
-								/>
-							</Grid>
+						<Form>
+							<Grid container direction="row">
+								<Grid item className={classes.textField} xs={8}>
+									<TextField
+										id="name"
+										name="name"
+										type="text"
+										label="Space name"
+										value={values.name}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.name && errors.name
+												? errors.name
+												: ''
+										}
+										error={touched.name && errors.name ? true : false}
+									/>
+								</Grid>
 
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="description"
-									name="description"
-									type="text"
-									label="Description"
-									value={values.description}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.description && errors.description
-											? errors.description
-											: ''
-									}
-									error={touched.description && errors.description ? true : false}
-								/>
-							</Grid>
+								<Grid item className={classes.textField} xs={8}>
+									<TextField
+										id="description"
+										name="description"
+										type="text"
+										label="Description"
+										value={values.description}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.description && errors.description
+												? errors.description
+												: ''
+										}
+										error={touched.description && errors.description ? true : false}
+									/>
+								</Grid>
 
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="maxBookings"
-									name="maxBookings"
-									type="number"
-									label="Max bookings"
-									value={values.maxBookings}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.description && errors.description
-											? errors.description
-											: ''
-									}
-									error={touched.description && errors.description ? true : false}
-								/>
-							</Grid>
+								<Grid item className={classes.textField} xs={8}>
+									<TextField
+										id="maxBookings"
+										name="maxBookings"
+										type="number"
+										label="Max bookings per timeslot"
+										value={values.maxBookings}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.description && errors.description
+												? errors.description
+												: ''
+										}
+										error={touched.description && errors.description ? true : false}
+									/>
+								</Grid>
 
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="startTime"
-									name="startTime"
-									type="text"
-									label="Start time"
-									value={values.startTime}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.description && errors.description
-											? errors.description
-											: ''
-									}
-									error={touched.description && errors.description ? true : false}
-								/>
-							</Grid>
+								<Grid item className={classes.textField} xs={8}>
 
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="endTime"
-									name="endTime"
-									type="text"
-									label="End time"
-									value={values.endTime}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.description && errors.description
-											? errors.description
-											: ''
-									}
-									error={touched.description && errors.description ? true : false}
-								/>
-							</Grid>
+								
+									<Field 
+										component={TimePicker} 
+										id="startTime"
+										name="startTime"
+										label="Start time"
+										value={values.startTime}
+										ampm={false}
+										autoOk={true}
+										minutesStep={5}
+									/>
 
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="timeSlotLen"
-									name="timeSlotLen"
-									type="number"
-									label="Time slot (i.e. 30 mins, 60 mins, etc.)"
-									value={values.timeSlotLen}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.description && errors.description
-											? errors.description
-											: ''
-									}
-									error={touched.description && errors.description ? true : false}
-								/>
-							</Grid>
+								</Grid>
 
-							<Grid item className={classes.loginButton} xs={6}>
-								<Button
-									color="primary"
-									type="submit"
-									variant="contained"
-									disabled={isSubmitting}
-									className={classes.containedBtn}
-								>
-									{' '}
+								<Grid item className={classes.textField} xs={8}>
+
+									<Field 
+										component={TimePicker} 
+										id="endTime"
+										name="endTime"
+										label="End time"
+										value={values.endTime}
+										ampm={false}
+										autoOk={true}
+										minutesStep={5}
+									/>
+									
+								</Grid>
+
+								<Grid item className={classes.textField} xs={8}>
+									<TextField
+										id="timeSlotLen"
+										name="timeSlotLen"
+										type="number"
+										label="Timeslot (i.e. 30 mins, 60 mins, etc.)"
+										value={values.timeSlotLen}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.description && errors.description
+												? errors.description
+												: ''
+										}
+										error={touched.description && errors.description ? true : false}
+									/>
+								</Grid>
+
+								<Grid item className={classes.loginButton} xs={6}>
+									<Button
+										color="primary"
+										type="submit"
+										variant="contained"
+										disabled={isSubmitting}
+										className={classes.containedBtn}
+									>
+										{' '}
                                         Save
-								</Button>
+									</Button>
 
-								<Button
-									color="primary"
-									variant="outlined"
-									className={classes.outlinedBtn}
-									onClick={handleClick(account ? `/account/${account.id}/services/` : '/dashboard')}
-								>
-									{' '}
+									<Button
+										color="primary"
+										variant="outlined"
+										className={classes.outlinedBtn}
+										onClick={handleClick(account ? `/account/${account.id}/services/` : '/dashboard')}
+									>
+										{' '}
                             Cancel
-								</Button>
-								{showFormStatus && (
-									<div className="formStatus">
-										{formStatus.type === 'success' ? (
-											<p className={classes.successMessage}>
-												{formStatus.message}
-											</p>
-										) : formStatus.type === 'error' ? (
-											<p className={classes.errorMessage}>
-												{formStatus.message}
-											</p>
-										) : null}
-									</div>
-								)}
+									</Button>
+									{showFormStatus && (
+										<div className="formStatus">
+											{formStatus.type === 'success' ? (
+												<p className={classes.successMessage}>
+													{formStatus.message}
+												</p>
+											) : formStatus.type === 'error' ? (
+												<p className={classes.errorMessage}>
+													{formStatus.message}
+												</p>
+											) : null}
+										</div>
+									)}
+								</Grid>
 							</Grid>
-						</Grid>
-					</Form>
-				)
-			}}			
-		</Formik>
+						</Form>
+					)
+				}}			
+			</Formik>
+		</MuiPickersUtilsProvider>
 	)
 }
 
