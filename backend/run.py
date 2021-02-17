@@ -40,11 +40,9 @@ api.add_resource(Booking, '/bookings', endpoint='booking_resource')
 api.add_resource(BookingSingular, '/bookings/<int:id>', endpoint='booking_singular_resource')
 api.add_resource(BookingList, '/bookings/account/<int:account_id>', endpoint='bookings_by_account')
 
-@app.route('/')
-def index():
-    return render_template('index.html')
 
-@app.route('/<path:path>', methods=['GET', 'POST'])
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
 def all_routes(path):
     if not(path.startswith('api')):
         return render_template('index.html')
