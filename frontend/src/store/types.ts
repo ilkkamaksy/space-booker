@@ -72,7 +72,7 @@ export interface SetBookingsAction {
 
 export interface SetDateAction {
     type: '@prefix/SET_SELECTED_DATE'
-    payload: Date | null
+    payload: Date
 }
 
 export interface SetFormVisibilityAction {
@@ -84,7 +84,7 @@ export type BookingActionTypes = InitAction | AddBookingAction | SetBookingsActi
 export interface BookingState {
     bookings: Booking[]
     updating: boolean
-    selectedDate: Date | null,
+    selectedDate: Date,
     bookingFormVisible: boolean
 }
 

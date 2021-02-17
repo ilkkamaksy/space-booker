@@ -123,7 +123,7 @@ export function saveBooking(booking:Booking):Promise<UseMutationResult<Booking, 
 	return axios.post(`${API_URL}/${API_PREFIX}/bookings`, booking, config)
 }
 
-export function getBookingsByService(service:Service|undefined):Promise<UseQueryResult<Booking[], Error>> {
+export function getBookingsByAccountId(accountId:string|undefined):Promise<UseQueryResult<Booking[], Error>> {
 	
 	const token = localStorage.getItem('access_token')
 
@@ -133,9 +133,20 @@ export function getBookingsByService(service:Service|undefined):Promise<UseQuery
 		}
 	}
 
-	const serviceId = service ? service.id : -1
+	return axios.get(`${API_URL}/${API_PREFIX}/bookings/account/${accountId}`, config)
+}
+
+export function getBookingsByAccountIdAndDateStr({ accountId, date}: { accountId: string|undefined, date: string}):Promise<UseQueryResult<Booking[], Error>> {
 	
-	return axios.get(`${API_URL}/${API_PREFIX}/bookings/service/${serviceId}`, config)
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+
+	return axios.get(`${API_URL}/${API_PREFIX}/bookings/account/${accountId}?date=${date}`, config)
 }
 
 export function me(token:string|undefined):Promise<UseQueryResult<UserType, Error>> {

@@ -31,7 +31,8 @@ class ServiceModel(db.Model):
             'startTime': str(self.startTime),
             'endTime': str(self.endTime),
             'timeSlotLen': self.timeSlotLen, 
-            'account_id': self.account_id
+            'account_id': self.account_id,
+            'bookings': [booking.json() for booking in self.bookings]
         }
 
     @classmethod

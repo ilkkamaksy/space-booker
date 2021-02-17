@@ -1,4 +1,6 @@
 from db import db
+from .service import ServiceModel
+from .account import AccountModel
 
 class BookingModel(db.Model):
     __tablename__ = 'bookings'
@@ -36,6 +38,30 @@ class BookingModel(db.Model):
     def find_by_service_id_and_date(cls, service_id, date):
         return cls.query.filter_by(service_id=service_id,date=date)
     
+
+    @classmethod
+    def find_by_account_id(cls, account_id):
+        return cls.query.join(
+                ServiceModel
+            ).join(
+                AccountModel
+            ).filter(
+                AccountModel.id == account_id
+            ).all()
+
+
+    @classmethod
+    def find_by_account_id_and_date(cls, account_id, date):
+        return cls.query.filter_by(
+                date=date
+            ).join(
+                ServiceModel
+            ).join(
+                AccountModel
+            ).filter(
+                AccountModel.id == account_id
+            )
+
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()

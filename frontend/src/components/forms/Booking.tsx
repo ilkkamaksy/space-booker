@@ -18,6 +18,8 @@ import { Booking, BookingAttributesType } from '../../types'
 
 import { setFormVisibility, startAction, addBooking } from '../../store/actions/bookings'
 
+import { dateString } from '../../utils/helpers'
+
 const stylesInUse = makeStyles((theme) =>
 	createStyles({
 		root: {
@@ -181,13 +183,10 @@ const BookingForm = ({
 		}
 
 		const date = selectedSlot.date ? selectedSlot.date : new Date()
-		const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
-			.toISOString()
-			.split('T')[0]
 
 		saveMutation.mutate({
 			email: formData.email,
-			date: dateString,
+			date: dateString(date),
 			slotNumber: selectedSlot.slotNumber,
 			service_id: selectedSlot.service.id,
 		})

@@ -38,7 +38,7 @@ api.add_resource(ServiceSingular, '/services/<int:id>')
 api.add_resource(ServiceList, '/services/account/<int:account_id>')
 api.add_resource(Booking, '/bookings', endpoint='booking_resource')
 api.add_resource(BookingSingular, '/bookings/<int:id>', endpoint='booking_singular_resource')
-api.add_resource(BookingList, '/bookings/service/<int:service_id>', endpoint='booking_by_services')
+api.add_resource(BookingList, '/bookings/account/<int:account_id>', endpoint='bookings_by_account')
 
 @app.route('/')
 def index():

@@ -55,6 +55,7 @@ export interface Service {
     endTime: string
     timeSlotLen: number
     account_id: number
+    bookings?: Booking[]
 }
 
 export interface AccountInput {

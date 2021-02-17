@@ -4,18 +4,25 @@ import { connect } from 'react-redux'
 import { useQuery } from 'react-query'
 import { 
 	getAccountById,
-	getBookingsByService 
+	getBookingsByAccountIdAndDateStr
 } from '../services/queries'
 
 import { 
 	useParams, 
 } from 'react-router-dom'
 
-import { setAccounts, setSingleAccount } from '../store/actions/accounts'
+import { 
+	setAccounts, 
+} from '../store/actions/accounts'
+
+import { 
+	setBookings, 
+	addBooking 
+} from '../store/actions/bookings'
 
 import { AppState } from '../store/types'
 
-import { Account, Service, BookingAttributesType } from '../types'
+import { Account, Service, BookingAttributesType, Booking } from '../types'
 
 import {
 	Container,
@@ -31,6 +38,8 @@ import {
 
 import DatePicker from './forms/DatePicker'
 import BookingForm from './forms/Booking'
+
+import { dateString } from '../utils/helpers'
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -81,17 +90,35 @@ const stylesInUse = makeStyles(() =>
 			marginBottom: '1rem',
 			textAlign: 'center'
 		},
-		slotContainer: {
+		slot: {
 			background: '#fff',
 			display: 'flex',
 			padding: '15px',
 			alignItems: 'center',
 			justifyContent: 'center',
 			margin: '2px',
-			cursor: 'pointer'
+			cursor: 'pointer',
+			'&:hover': {
+				background: '#f7f7f7'
+			}
 		},
-		slotContent: {
-
+		slotReserved: {
+			background: '#e2e2e2',
+			color: '#666',
+			display: 'flex',
+			padding: '15px',
+			alignItems: 'center',
+			justifyContent: 'center',
+			margin: '2px',
+		},
+		selectedSlot: {
+			background: '#5BC8AF',
+			display: 'flex',
+			padding: '15px',
+			alignItems: 'center',
+			justifyContent: 'center',
+			margin: '2px',
+			cursor: 'pointer',
 		},
 		containedBtn: {
 			backgroundColor: '#6A0572',
@@ -122,12 +149,14 @@ type Props = ReturnType<typeof mapStateToProps>
 
 interface DispatchProps { 
     setAccounts: (accounts:Account[]) => void
+	setBookings: (bookings: Booking[]) => void
 }
 
 const Calendar = ({ 
 	accountdata, 
 	bookingData,
 	setAccounts, 
+	setBookings
 }: Props & DispatchProps):React.ReactElement => {
 
 	const [bookingFormOpen, setbookingFormOpen] = useState(false)
@@ -139,18 +168,27 @@ const Calendar = ({
 	}
 
 	const handleCloseBookingForm = () => {
+		setSelectedSlot(null)
 		setbookingFormOpen(false)
 	}
 
 	const { accountId } = useParams<RouteParams>()
 	const account = (accountdata && accountId) && accountdata.accounts.find(acc => acc.id === parseInt(accountId)) 
-	console.log('account first', account, accountdata, bookingData, bookingFormOpen)
 
 	const classes = stylesInUse()
 
 	const queryAccount = useQuery(['getAccountById', accountId], () => getAccountById(accountId), { 
 		enabled: !account
 	})
+
+	const queryAccountBookings = useQuery(
+		['getBookingsByAccountIdAndDateStr', 
+			{ accountId, date: dateString(bookingData.selectedDate) }], 
+		() => getBookingsByAccountIdAndDateStr({ accountId, date: dateString(bookingData.selectedDate) }), { 
+			enabled: !!accountId
+		})
+
+	console.log('bookingData', bookingData)
 
 	useEffect(() => {
 		if (
@@ -161,7 +199,15 @@ const Calendar = ({
 			setAccounts([queryAccount.data.data])
 		}
 
-	}, [queryAccount, account])
+		if (
+			account &&
+			queryAccountBookings.isSuccess && 
+            queryAccountBookings.data.data
+		) {
+			setBookings(queryAccountBookings.data.data)
+		}
+
+	}, [queryAccount, queryAccountBookings, account])
 
 	const timeToSeconds = (timeStr:string):number => {
 		const timeStrArr = timeStr.split(':')
@@ -185,10 +231,17 @@ const Calendar = ({
 			const mins = `${increment % 60}`
 			const time = `${hours.length === 1 ? 0 : ''}${hours}:${mins}${mins.length === 1 ? 0 : ''}` 
 	
+			const reservations = bookingData.bookings.length > 0 
+				? bookingData.bookings.filter(booking => 
+					booking.slotNumber === i && 
+					booking.service_id === service.id &&
+					dateString(bookingData.selectedDate) === booking.date) : []
+			const isReserved = reservations.length >= service.maxBookings
+
 			res.push({
 				id: i,
 				slotNumber: i,
-				isReserved: false,
+				isReserved,
 				time,
 				service: service,
 				date: bookingData.selectedDate
@@ -227,14 +280,25 @@ const Calendar = ({
 											if (!slot) {
 												return
 											}
+											if (slot.isReserved) {
+												return (
+													<div 
+														key={`${service.id}-${slot.id}`} 
+														className={classes.slotReserved}>
+														<div>
+															{slot.time}
+														</div>
+													</div>
+												)
+											}
 											return (
 												<div 
 													key={`${service.id}-${slot.id}`} 
-													className={classes.slotContainer}
+													className={selectedSlot && selectedSlot.id === slot.id && selectedSlot.service.id === slot.service.id ? classes.selectedSlot : classes.slot}
 													onClick={() => handleSelectDate(slot)}
 												>
-													<div className={classes.slotContent}>
-														{slot.time}
+													<div>
+														{slot.time} 
 													</div>
 												</div>
 											)
@@ -252,7 +316,7 @@ const Calendar = ({
 				<DialogTitle id="form-dialog-title">Make a booking</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						{selectedSlot && `To confirm your booking of ${selectedSlot.service.name} for ${selectedSlot?.date?.toDateString()} at ${selectedSlot?.time}, add your email below.`}
+						{selectedSlot && `To book ${selectedSlot.service.name} on ${selectedSlot?.date?.toDateString()} at ${selectedSlot?.time}, add your email below.`}
 					</DialogContentText>
 					<BookingForm selectedSlot={selectedSlot} handleCloseBookingForm={handleCloseBookingForm} />
 				</DialogContent>
@@ -269,5 +333,5 @@ const Calendar = ({
 
 export default connect(mapStateToProps, {
 	setAccounts,
-	setSingleAccount,
+	setBookings
 })(Calendar)

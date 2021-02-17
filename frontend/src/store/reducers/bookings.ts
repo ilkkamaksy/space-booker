@@ -3,12 +3,20 @@ import {
 	BookingState, 
 } from '../types'
 
+import { Booking } from '../../types'
+
 const initialState = {
 	bookings: [],
 	updating: false,
 	selectedDate: new Date(),
 	bookingFormVisible: false
 }
+
+const mergeBookings = (oldBookings:Booking[], newBookings:Booking[]):Booking[] => {
+	const combined = oldBookings.concat(newBookings)
+	const bookingSet = new Set(combined)
+	return Array.from(bookingSet)
+} 
 
 const bookingReducer = (state = initialState, action: BookingActionTypes):BookingState => {
 	switch (action.type) {
@@ -26,7 +34,7 @@ const bookingReducer = (state = initialState, action: BookingActionTypes):Bookin
 	case '@prefix/SET_BOOKINGS':
 		return {
 			...state,
-			bookings: action.payload,
+			bookings: mergeBookings(state.bookings, action.payload),
 			updating: false
 		}
 	case '@prefix/SET_SELECTED_DATE':

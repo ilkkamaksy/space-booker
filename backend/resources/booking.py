@@ -65,23 +65,13 @@ class BookingSingular(Resource):
 class BookingList(Resource):
     parser = reqparse.RequestParser()  
     
-    parser.add_argument('email', location='args', type=str)
     parser.add_argument('date', location='args', type=lambda x: inputs.date(x))
 
-    def get(self, service_id):
+    def get(self, account_id):
         
         params = BookingList.parser.parse_args()
 
         if (params.date):
-            return { 
-                'bookings': [booking.json() for booking in BookingModel.find_by_service_id_and_date(service_id, params.date)] 
-            }    
-            
-        elif (params.email):
-            return { 
-                'bookings': [booking.json() for booking in BookingModel.find_by_email(params.email)] 
-            }
-
-        return { 
-            'bookings': [booking.json() for booking in BookingModel.find_by_service_id(service_id)] 
-        }
+            return [booking.json() for booking in BookingModel.find_by_account_id_and_date(account_id, params.date)] 
+        
+        return [booking.json() for booking in BookingModel.find_by_account_id(account_id)]

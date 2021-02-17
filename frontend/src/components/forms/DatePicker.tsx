@@ -17,15 +17,13 @@ const mapStateToProps = (state: AppState) => ({
 type StateProps = ReturnType<typeof mapStateToProps>
 
 interface DispatchProps { 
-	setSelectedDate: (date: Date|null) => void
+	setSelectedDate: (date: Date) => void
 }
 
 const DatePickerComponent = ({ selectedDate, setSelectedDate }: StateProps & DispatchProps):React.ReactElement => {
 
 	const setDate = (formData: Date | null) => {
-		if (formData) {
-			setSelectedDate(formData)
-		}
+		setSelectedDate(formData ? formData : new Date())
 	}
 
 	return (
@@ -34,7 +32,7 @@ const DatePickerComponent = ({ selectedDate, setSelectedDate }: StateProps & Dis
 				value={selectedDate} 
 				onChange={setDate} 
 				variant="inline"
-				inputVariant="outlined"
+				inputVariant="standard"
 				label="Date"
 			/>
 		</MuiPickersUtilsProvider>
