@@ -44,10 +44,18 @@ api.add_resource(BookingList, '/bookings/account/<int:account_id>', endpoint='bo
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def all_routes(path):
-    if not(path.startswith('api')):
+    if not(path.startswith('api')) or not(path.startswith('img')):
         return render_template('index.html')
     else:
         return redirect(url_for('404_error'))
+
+@app.route('/img/<path:path>')
+def send_img(path):
+    return send_from_directory('build/static/img/', path)
+
+@app.route('/css/<path:path>')
+def send_css(path):
+    return send_from_directory('build/static/css/', path)
 
 @app.route('/api/v1/me')
 @jwt_required()
