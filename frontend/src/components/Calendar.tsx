@@ -17,7 +17,6 @@ import {
 
 import { 
 	setBookings, 
-	addBooking 
 } from '../store/actions/bookings'
 
 import { AppState } from '../store/types'
@@ -28,16 +27,11 @@ import {
 	Container,
 	createStyles,
 	makeStyles,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	Button
 } from '@material-ui/core'
 
 import DatePicker from './forms/DatePicker'
-import BookingForm from './forms/Booking'
+import TimeSlotList from './TimeSlotList'
+import BookingFormDialog from './BookingFormDialog'
 
 import { dateString } from '../utils/helpers'
 
@@ -62,10 +56,6 @@ const stylesInUse = makeStyles(() =>
 			flex: 'auto',
 			margin: '5px'
 		},
-		gridContent: {
-			display: 'flex',
-			flexDirection: 'column'
-		},
 		header: {
 			background: '#6A0572',
 			justifyContent: 'center',
@@ -89,36 +79,6 @@ const stylesInUse = makeStyles(() =>
 			fontWeight: 'bold',
 			marginBottom: '1rem',
 			textAlign: 'center'
-		},
-		slot: {
-			background: '#fff',
-			display: 'flex',
-			padding: '15px',
-			alignItems: 'center',
-			justifyContent: 'center',
-			margin: '2px',
-			cursor: 'pointer',
-			'&:hover': {
-				background: '#f7f7f7'
-			}
-		},
-		slotReserved: {
-			background: '#e2e2e2',
-			color: '#666',
-			display: 'flex',
-			padding: '15px',
-			alignItems: 'center',
-			justifyContent: 'center',
-			margin: '2px',
-		},
-		selectedSlot: {
-			background: '#5BC8AF',
-			display: 'flex',
-			padding: '15px',
-			alignItems: 'center',
-			justifyContent: 'center',
-			margin: '2px',
-			cursor: 'pointer',
 		},
 		containedBtn: {
 			backgroundColor: '#6A0572',
@@ -161,6 +121,7 @@ const Calendar = ({
 
 	const [bookingFormOpen, setbookingFormOpen] = useState(false)
 	const [selectedSlot, setSelectedSlot] = useState<BookingAttributesType|null>(null)
+	const now = new Date()
 
 	const handleSelectDate = (slot:BookingAttributesType) => {
 		setSelectedSlot(slot)
@@ -187,8 +148,6 @@ const Calendar = ({
 		() => getBookingsByAccountIdAndDateStr({ accountId, date: dateString(bookingData.selectedDate) }), { 
 			enabled: !!accountId
 		})
-
-	console.log('bookingData', bookingData)
 
 	useEffect(() => {
 		if (
@@ -225,18 +184,23 @@ const Calendar = ({
 		const timeUnits = timeSlotCount(service)
 		const res = []
 		for (let i = 0; i < timeUnits; i++) {
+
 			const timeStrParts = service.startTime.split(':')
 			const increment = service.timeSlotLen * i  
 			const hours = `${Math.floor(parseInt(timeStrParts[0]) + increment/60)}`
 			const mins = `${increment % 60}`
 			const time = `${hours.length === 1 ? 0 : ''}${hours}:${mins}${mins.length === 1 ? 0 : ''}` 
-	
+
+			const selectedTime = new Date(bookingData.selectedDate)
+			selectedTime.setHours(parseInt(hours))
+			selectedTime.setMinutes(parseInt(mins))
+
 			const reservations = bookingData.bookings.length > 0 
 				? bookingData.bookings.filter(booking => 
 					booking.slotNumber === i && 
 					booking.service_id === service.id &&
 					dateString(bookingData.selectedDate) === booking.date) : []
-			const isReserved = reservations.length >= service.maxBookings
+			const isReserved =  selectedTime < now || reservations.length >= service.maxBookings 
 
 			res.push({
 				id: i,
@@ -275,36 +239,12 @@ const Calendar = ({
 							return (
 								<div key={service.id} className={classes.gridItem}>
 									<h2 className={classes.heading_2}>{service.name}</h2>
-									<div className={classes.gridContent}>
-										{slots.map(slot => {
-											if (!slot) {
-												return
-											}
-											if (slot.isReserved) {
-												return (
-													<div 
-														key={`${service.id}-${slot.id}`} 
-														className={classes.slotReserved}>
-														<div>
-															{slot.time}
-														</div>
-													</div>
-												)
-											}
-											return (
-												<div 
-													key={`${service.id}-${slot.id}`} 
-													className={selectedSlot && selectedSlot.id === slot.id && selectedSlot.service.id === slot.service.id ? classes.selectedSlot : classes.slot}
-													onClick={() => handleSelectDate(slot)}
-												>
-													<div>
-														{slot.time} 
-													</div>
-												</div>
-											)
-										})}
-									</div>
-									
+									<TimeSlotList 
+										slots={slots}
+										service={service}
+										selectedSlot={selectedSlot}
+										handleSelectDate={handleSelectDate}
+									/>			
 								</div>
 							)
 						})}
@@ -312,20 +252,11 @@ const Calendar = ({
 				</Container>
 			</div>
 			
-			<Dialog open={bookingFormOpen} onClose={handleCloseBookingForm} aria-labelledby="form-dialog-title">
-				<DialogTitle id="form-dialog-title">Make a booking</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						{selectedSlot && `To book ${selectedSlot.service.name} on ${selectedSlot?.date?.toDateString()} at ${selectedSlot?.time}, add your email below.`}
-					</DialogContentText>
-					<BookingForm selectedSlot={selectedSlot} handleCloseBookingForm={handleCloseBookingForm} />
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleCloseBookingForm} color="primary">
-            Cancel
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<BookingFormDialog 
+				bookingFormOpen={bookingFormOpen}
+				handleCloseBookingForm={handleCloseBookingForm}
+				selectedSlot={selectedSlot}
+			/>
 			
 		</div>
 	)

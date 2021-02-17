@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { DatePicker } from '@material-ui/pickers'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'

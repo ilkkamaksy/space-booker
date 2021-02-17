@@ -16,7 +16,7 @@ import { saveBooking } from '../../services/queries'
 import { AppState } from '../../store/types'
 import { Booking, BookingAttributesType } from '../../types'
 
-import { setFormVisibility, startAction, addBooking } from '../../store/actions/bookings'
+import { startAction, addBooking } from '../../store/actions/bookings'
 
 import { dateString } from '../../utils/helpers'
 
