@@ -29,9 +29,12 @@ import {
 	makeStyles,
 } from '@material-ui/core'
 
+import { Info as InfoIcon } from '@material-ui/icons'
+
 import DatePicker from './forms/DatePicker'
 import TimeSlotList from './TimeSlotList'
 import BookingFormDialog from './BookingFormDialog'
+import ServiceInfoDialog from './ServiceInfoDialog'
 
 import { dateString } from '../utils/helpers'
 
@@ -91,6 +94,12 @@ const stylesInUse = makeStyles(() =>
 		row: {
 			padding: '15px 0',
 			background: '#ddd'
+		},
+		infoIcon: {
+			margin: '0 4px 0',
+			position: 'relative',
+			top: '2px',
+			cursor: 'pointer'
 		}
 	})
 )
@@ -119,7 +128,9 @@ const Calendar = ({
 	setBookings
 }: Props & DispatchProps):React.ReactElement => {
 
-	const [bookingFormOpen, setbookingFormOpen] = useState(false)
+	const [bookingFormOpen, setbookingFormOpen] = useState<boolean>(false)
+	const [infoFormOpen, setInfoFormOpen] = useState<boolean>(false)
+	const [selectedService, setSelectedService] = useState<Service|null>(null)
 	const [selectedSlot, setSelectedSlot] = useState<BookingAttributesType|null>(null)
 	const now = new Date()
 
@@ -131,6 +142,11 @@ const Calendar = ({
 	const handleCloseBookingForm = () => {
 		setSelectedSlot(null)
 		setbookingFormOpen(false)
+	}
+
+	const handleToggleInfoForm = (service:Service|null) => {
+		setSelectedService(service)
+		setInfoFormOpen(!infoFormOpen)
 	}
 
 	const { accountId } = useParams<RouteParams>()
@@ -238,13 +254,22 @@ const Calendar = ({
 							const slots = makeServiceTimeSlots(service)
 							return (
 								<div key={service.id} className={classes.gridItem}>
-									<h2 className={classes.heading_2}>{service.name}</h2>
+									<h2 className={classes.heading_2}>
+										{service.name}
+										<InfoIcon 
+											onClick={() => handleToggleInfoForm(service)} 
+											color="primary" 
+											fontSize="small"
+											className={classes.infoIcon}
+										/>
+									</h2>
 									<TimeSlotList 
 										slots={slots}
 										service={service}
 										selectedSlot={selectedSlot}
 										handleSelectDate={handleSelectDate}
-									/>			
+									/>
+												
 								</div>
 							)
 						})}
@@ -256,6 +281,12 @@ const Calendar = ({
 				bookingFormOpen={bookingFormOpen}
 				handleCloseBookingForm={handleCloseBookingForm}
 				selectedSlot={selectedSlot}
+			/>
+
+			<ServiceInfoDialog 
+				infoFormOpen={infoFormOpen}
+				handleCloseInfoForm={() => handleToggleInfoForm(null)}
+				service={selectedService}
 			/>
 			
 		</div>
