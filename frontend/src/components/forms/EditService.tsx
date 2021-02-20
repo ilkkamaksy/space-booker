@@ -93,13 +93,29 @@ const stylesInUse = makeStyles((theme) =>
 				borderColor: '#6A0572',
 			},
 		},
+		formColumn: {
+			
+		},
 		textField: {
+			margin: '5px 0 30px',
 			'& > *': {
 				width: '100%',
 			},
 		},
-		loginButton: {
-			marginTop: '30px',
+		textAreaField: {
+			height: '100px',
+			width: '99%',
+			lineHeight: '22px',
+			display: 'block',
+			margin: '5px 0 40px',
+			padding: '15px',
+			fontFamily: 'Roboto, Helvetica, Arial, sans-serif'
+		},
+		dateField: {
+			margin: '5px 0 20px',
+		},
+		submitButton: {
+			marginTop: '0',
 		},
 		title: { textAlign: 'left' },
 		successMessage: { color: theme.palette.success.main },
@@ -301,10 +317,10 @@ const EditService = ({
 				initialValues={{
 					name: serviceToEdit ? serviceToEdit.name : '',
 					description: serviceToEdit ? serviceToEdit.description : '',
-					maxBookings: serviceToEdit ? serviceToEdit.maxBookings : '',
+					maxBookings: serviceToEdit ? serviceToEdit.maxBookings : 1,
 					startTime: serviceToEdit ? timeStrToDate(serviceToEdit.startTime) : defaultStartTime,
 					endTime: serviceToEdit ? timeStrToDate(serviceToEdit.endTime) : defaultEndTime,
-					timeSlotLen: serviceToEdit ? serviceToEdit.timeSlotLen : '',
+					timeSlotLen: serviceToEdit ? serviceToEdit.timeSlotLen : 30,
 				}}
 				onSubmit={(values: SpaceFormFields, actions) => {
 					saveServiceData(values)
@@ -329,13 +345,16 @@ const EditService = ({
 							
 						<Form>
 							<Grid container direction="row">
-								<Grid item className={classes.textField} xs={8}>
+								<Grid item className={classes.formColumn} xs={8}>
 									<TextField
 										id="name"
 										name="name"
 										type="text"
 										label="Space name"
+										variant="outlined"
+										fullWidth
 										value={values.name}
+										className={classes.textField}
 										onChange={handleChange}
 										onBlur={handleBlur}
 										helperText={
@@ -346,44 +365,27 @@ const EditService = ({
 										error={touched.name && errors.name ? true : false}
 									/>
 								</Grid>
-
-								<Grid item className={classes.textField} xs={8}>
-									<TextField
+							</Grid>
+							
+							<Grid container direction="row">
+								<Grid item className={classes.formColumn} xs={8}>
+									<label htmlFor={'description'}>Description</label>
+									<Field
 										id="description"
 										name="description"
-										type="text"
 										label="Description"
+										placeholder="Write a short description here..."
+										component="textarea"
+										rowsMin={6}
+										className={classes.textAreaField}
 										value={values.description}
 										onChange={handleChange}
-										onBlur={handleBlur}
-										helperText={
-											touched.description && errors.description
-												? errors.description
-												: ''
-										}
-										error={touched.description && errors.description ? true : false}
 									/>
 								</Grid>
+							</Grid>
 
-								<Grid item className={classes.textField} xs={8}>
-									<TextField
-										id="maxBookings"
-										name="maxBookings"
-										type="number"
-										label="Max bookings per timeslot"
-										value={values.maxBookings}
-										onChange={handleChange}
-										onBlur={handleBlur}
-										helperText={
-											touched.description && errors.description
-												? errors.description
-												: ''
-										}
-										error={touched.description && errors.description ? true : false}
-									/>
-								</Grid>
-
-								<Grid item className={classes.textField} xs={8}>
+							<Grid container direction="row">
+								<Grid item className={classes.formColumn} xs={2}>
 
 								
 									<Field 
@@ -391,6 +393,7 @@ const EditService = ({
 										id="startTime"
 										name="startTime"
 										label="Start time"
+										className={classes.dateField}
 										value={values.startTime}
 										ampm={false}
 										autoOk={true}
@@ -399,13 +402,14 @@ const EditService = ({
 
 								</Grid>
 
-								<Grid item className={classes.textField} xs={8}>
+								<Grid item className={classes.formColumn} xs={2}>
 
 									<Field 
 										component={TimePicker} 
 										id="endTime"
 										name="endTime"
 										label="End time"
+										className={classes.dateField}
 										value={values.endTime}
 										ampm={false}
 										autoOk={true}
@@ -413,13 +417,16 @@ const EditService = ({
 									/>
 									
 								</Grid>
+							
 
-								<Grid item className={classes.textField} xs={8}>
+								<Grid item className={classes.formColumn} xs={2}>
 									<TextField
 										id="timeSlotLen"
 										name="timeSlotLen"
 										type="number"
-										label="Timeslot (i.e. 30 mins, 60 mins, etc.)"
+										label="Timeslot (i.e. 30 mins)"
+										variant="outlined"
+										className={classes.textField}
 										value={values.timeSlotLen}
 										onChange={handleChange}
 										onBlur={handleBlur}
@@ -432,7 +439,29 @@ const EditService = ({
 									/>
 								</Grid>
 
-								<Grid item className={classes.loginButton} xs={6}>
+								<Grid item className={classes.formColumn} xs={2}>
+									<TextField
+										id="maxBookings"
+										name="maxBookings"
+										type="number"
+										label="Max bookings per timeslot"
+										variant="outlined"
+										className={classes.textField}
+										value={values.maxBookings}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.description && errors.description
+												? errors.description
+												: ''
+										}
+										error={touched.description && errors.description ? true : false}
+									/>
+								</Grid>
+							</Grid>
+							
+							<Grid container direction="row">
+								<Grid item className={classes.submitButton} xs={6}>
 									<Button
 										color="primary"
 										type="submit"

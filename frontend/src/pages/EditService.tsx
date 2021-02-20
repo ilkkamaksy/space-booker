@@ -14,7 +14,7 @@ import { AppState } from '../store/types'
 
 import ServiceForm from '../components/forms/EditService'
 
-const stylesInUse = makeStyles((theme) =>
+const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
 			background: '#FFFFFF',
@@ -104,10 +104,7 @@ const EditService = ({ accountdata }: Props):React.ReactElement => {
 
 			<div className={classes.content}>
 				<Container maxWidth="xl">
-					<h2 className={classes.heading_2}>General information</h2>
-					<p className={classes.introText}>
-						Enter the space information.
-					</p>
+					<h2 className={classes.heading_2}>Enter the space information</h2>
 
 					<ServiceForm account={account} serviceToEdit={serviceToEdit} />
 					

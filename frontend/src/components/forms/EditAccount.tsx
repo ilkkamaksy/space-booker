@@ -88,12 +88,13 @@ const stylesInUse = makeStyles((theme) =>
 			},
 		},
 		textField: {
+			margin: '5px 0 30px',
 			'& > *': {
 				width: '100%',
 			},
 		},
-		loginButton: {
-			marginTop: '30px',
+		submitButton: {
+			marginTop: '0',
 		},
 		title: { textAlign: 'left' },
 		successMessage: { color: theme.palette.success.main },
@@ -269,6 +270,7 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 									name="name"
 									type="text"
 									label="Organisation name"
+									variant="outlined"
 									value={values.name}
 									onChange={handleChange}
 									onBlur={handleBlur}
@@ -287,6 +289,7 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 									name="siteUrl"
 									type="siteUrl"
 									label="Website"
+									variant="outlined"
 									value={values.siteUrl}
 									onChange={handleChange}
 									onBlur={handleBlur}
@@ -305,6 +308,7 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 									name="description"
 									type="description"
 									label="Description"
+									variant="outlined"
 									value={values.description}
 									onChange={handleChange}
 									onBlur={handleBlur}
@@ -317,7 +321,7 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 								/>
 							</Grid>
 
-							<Grid item className={classes.loginButton} xs={6}>
+							<Grid item className={classes.submitButton} xs={6}>
 								<Button
 									color="primary"
 									type="submit"
