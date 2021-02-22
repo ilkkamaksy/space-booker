@@ -88,8 +88,6 @@ const EditService = ({ accountdata }: Props):React.ReactElement => {
 	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
 	const serviceToEdit = serviceId ? account?.services.find(service => service.id === parseInt(serviceId)) : undefined
 
-	console.log(accountId, serviceId, account, serviceToEdit)
-
 	const title = serviceId ? 'Edit space' : 'Add new space'
 
 	const classes = stylesInUse()

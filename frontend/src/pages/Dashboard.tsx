@@ -71,6 +71,9 @@ const stylesInUse = makeStyles(() =>
 			margin: '1rem 0 1.5rem',
 			color:'#111'
 		},
+		listItem: {
+			paddingLeft: 0
+		},
 		listTitle: {
 			fontSize: '1.2em',
 			fontWeight: 'bold',
@@ -141,7 +144,7 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 						: <List>
 							{accountdata.accounts.map(item => {
 								return (
-									<ListItem key={item.id}>
+									<ListItem key={item.id} className={classes.listItem}>
 										<ListItemText
 											className={classes.heading_2}
 											primary={

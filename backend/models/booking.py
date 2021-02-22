@@ -8,12 +8,15 @@ class BookingModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(200), nullable=False)
     date = db.Column(db.Date, nullable=False)
+    dateTime = db.Column(db.DateTime, nullable=False)
     slotNumber = db.Column(db.Integer, nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('services.id'), nullable=False)
+    service = db.relationship('ServiceModel', back_populates='bookings')
 
-    def __init__(self, email, date, slotNumber, service_id):
+    def __init__(self, email, date, dateTime, slotNumber, service_id):
         self.email = email
         self.date = date
+        self.dateTime = dateTime
         self.slotNumber = slotNumber
         self.service_id = service_id
 
@@ -22,8 +25,13 @@ class BookingModel(db.Model):
             'id': self.id,
             'email': self.email,
             'date': str(self.date),
+            'dateTime': str(self.dateTime),
             'slotNumber': self.slotNumber,
-            'service_id': self.service_id
+            'service': {
+                'name': self.service.name,
+                'id': self.service.id,
+                'description': self.service.description
+            }
         }
 
     @classmethod

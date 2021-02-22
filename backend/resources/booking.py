@@ -1,11 +1,13 @@
 from flask_restful import Resource, reqparse, inputs
 from flask_jwt import jwt_required, current_identity
+import datetime
 from models.booking import BookingModel
 
 class Booking(Resource):
     parser = reqparse.RequestParser(bundle_errors=True)  
     parser.add_argument('email', type=str, required=True, help='Email cannot be empty')
     parser.add_argument('date', type=lambda x: inputs.date(x), required=True, help='Date cannot be empty')
+    parser.add_argument('dateTime', type=inputs.datetime_from_iso8601, required=True, help='Time cannot be empty')
     parser.add_argument('slotNumber', type=int, required=True, help='Time slot cannot be empty')
     parser.add_argument('service_id', type=int, required=True, help='Service id cannot be empty')
 
@@ -54,7 +56,8 @@ class BookingSingular(Resource):
             }, 404
             
         booking.email = data['email']
-        booking.date = data['date']    
+        booking.date = data['date']
+        booking.date = data['time']    
         booking.slotNumber = data['slotNumber'] 
         
         booking.save_to_db()
@@ -63,15 +66,23 @@ class BookingSingular(Resource):
         
         
 class BookingList(Resource):
-    parser = reqparse.RequestParser()  
     
+    parser = reqparse.RequestParser()  
     parser.add_argument('date', location='args', type=lambda x: inputs.date(x))
+    parser.add_argument('after', location='args', type=lambda x: inputs.date(x))
+    parser.add_argument('before', location='args', type=lambda x: inputs.date(x))
 
     def get(self, account_id):
-        
+
         params = BookingList.parser.parse_args()
 
         if (params.date):
+            return [booking.json() for booking in BookingModel.find_by_account_id_and_date(account_id, params.date)] 
+        elif (params.after and params.before):
+            return [booking.json() for booking in BookingModel.find_by_account_id_and_date(account_id, params.date)] 
+        elif (params.before):
+            return [booking.json() for booking in BookingModel.find_by_account_id_and_date(account_id, params.date)] 
+        elif (params.after):
             return [booking.json() for booking in BookingModel.find_by_account_id_and_date(account_id, params.date)] 
         
         return [booking.json() for booking in BookingModel.find_by_account_id(account_id)]

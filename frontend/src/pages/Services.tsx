@@ -6,23 +6,24 @@ import {
 	Button,
 	createStyles,
 	makeStyles,
-	List,
-	ListItem,
-	ListItemText,
-	Link
+	Grid,
 } from '@material-ui/core'
 import { 
-	Link as RouterLink, 
 	useParams, 
 	useHistory,
 } from 'react-router-dom'
 
-import { getAccounts } from '../services/queries'
+import { 
+	getAccounts,
+} from '../services/queries'
 
 import { setAccounts } from '../store/actions/accounts'
 
 import { AppState } from '../store/types'
 import { Account } from '../types'
+
+import ServiceList from './ServiceList'
+import BookingList from './BookingList'
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -67,16 +68,6 @@ const stylesInUse = makeStyles(() =>
 		introText: {
 			fontSize: '1.2rem',
 			margin: '0.5rem auto 1rem',
-		},
-		notice: {
-			fontSize: '1em',
-			margin: '1rem 0 1.5rem',
-			color:'#111'
-		},
-		listTitle: {
-			fontSize: '1.2em',
-			fontWeight: 'bold',
-			color:'#000'
 		},
 		containedBtn: {
 			backgroundColor: '#6A0572',
@@ -123,7 +114,6 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 		enabled: accountdata.accounts.length === 0,
 	})
 
-
 	useEffect(() => {
 		if (account) {
 			setAddNewSpacePath(`/account/${account.id}/services/add`)
@@ -156,56 +146,29 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 
 			<div className={classes.content}>
 				<Container maxWidth="xl">
-					<h2 className={classes.heading_2}>{subTitle}</h2>
-				
-					{account && account.services.length === 0 
-						? <p className={classes.notice}>{'You haven\'t added any services yet. Add one to get started!'} </p>
-						
-						: <List>
-							{account && account.services.map(item => {
-								return (
-									<ListItem key={item.id}>
-										<ListItemText
-											className={classes.heading_2}
-											primary={
-												<React.Fragment>
-													<Link
-														className={classes.listTitle}
-														component={RouterLink}
-														to={`/account/${account.id}/services/${item.id}/edit`}
-													>
-														{item.name}
-													</Link>
-												</React.Fragment>
-											}
-											secondary={
-												<React.Fragment>
-													<Link
-														component={RouterLink}
-														to={`/account/${account.id}/services/${item.id}/edit`}
-													>
-														Edit service
-													</Link>	
-												</React.Fragment>
-											}
-										/>
-									</ListItem>
-								) 
-							})}
-						</List>
-					}
-
 					
-					<Button 
-						color="primary"
-						className={classes.containedBtn}
-						variant="contained"
-						disableElevation
-						onClick={handleClick(addNewSpacePath)}
-					>
+					<Grid container direction="row">
+						<Grid item xs={6}>
+							<h2 className={classes.heading_2}>{subTitle}</h2>
+							<ServiceList account={account} />
+							<Button 
+								color="primary"
+								className={classes.containedBtn}
+								variant="contained"
+								disableElevation
+								onClick={handleClick(addNewSpacePath)}
+							>
 						Add new service
 						
-					</Button>
+							</Button>
+						</Grid>
+						<Grid item xs={6}>
+							<h2 className={classes.heading_2}>Recent bookings</h2>
+							{accountId ? <BookingList account={account} /> : <></> }
+						</Grid>
+					</Grid>
+
+					
 				</Container>
 			</div>
 		</div>
@@ -213,5 +176,5 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 }
 
 export default connect(mapStateToProps, {
-	setAccounts
+	setAccounts,
 })(Services)

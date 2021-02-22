@@ -214,7 +214,7 @@ const Calendar = ({
 			const reservations = bookingData.bookings.length > 0 
 				? bookingData.bookings.filter(booking => 
 					booking.slotNumber === i && 
-					booking.service_id === service.id &&
+					booking.service?.id === service.id &&
 					dateString(bookingData.selectedDate) === booking.date) : []
 			const isReserved =  selectedTime < now || reservations.length >= service.maxBookings 
 

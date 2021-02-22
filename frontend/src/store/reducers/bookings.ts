@@ -14,8 +14,9 @@ const initialState = {
 
 const mergeBookings = (oldBookings:Booking[], newBookings:Booking[]):Booking[] => {
 	const combined = oldBookings.concat(newBookings)
-	const bookingSet = new Set(combined)
-	return Array.from(bookingSet)
+	const bookingSet = combined.reduce((r, i) => 
+		!r.some(j => JSON.stringify(i) === JSON.stringify(j)) ? [...r, i] : r, []) 
+	return bookingSet
 } 
 
 const bookingReducer = (state = initialState, action: BookingActionTypes):BookingState => {

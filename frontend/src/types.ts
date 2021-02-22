@@ -22,8 +22,10 @@ export interface Booking {
     id?: number
     email: string
     date: string
+    dateTime: string
     slotNumber: number
     service_id: number
+    service?: Service
 }
 
 export interface BookingAttributesType {

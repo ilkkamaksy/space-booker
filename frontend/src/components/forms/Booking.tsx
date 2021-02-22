@@ -164,12 +164,10 @@ const BookingForm = ({
     
 	const saveMutation = useMutation(saveBooking, { 
 		onError: () => {
-			console.log('error')
 			setFormStatus(formStatusProps.error)
 			setShowFormStatus(true)
 		},
 		onSuccess: () => {
-			console.log('success')
 			setFormStatus(formStatusProps.success)
 			setShowFormStatus(true)
 			startAction()
@@ -183,10 +181,16 @@ const BookingForm = ({
 		}
 
 		const date = selectedSlot.date ? selectedSlot.date : new Date()
+		const timeStrParts = selectedSlot.time.split(':')
+		date.setHours(parseInt(timeStrParts[0]))
+		date.setMinutes(parseInt(timeStrParts[1]))
+
+		const dateTime = date.toISOString()
 
 		saveMutation.mutate({
 			email: formData.email,
 			date: dateString(date),
+			dateTime: dateTime,
 			slotNumber: selectedSlot.slotNumber,
 			service_id: selectedSlot.service.id,
 		})
