@@ -1,4 +1,5 @@
 from db import db
+from sqlalchemy import desc
 from .service import ServiceModel
 from .account import AccountModel
 
@@ -30,7 +31,9 @@ class BookingModel(db.Model):
             'service': {
                 'name': self.service.name,
                 'id': self.service.id,
-                'description': self.service.description
+                'description': self.service.description,
+                'timeSlotLen': self.service.timeSlotLen,
+                'account_id': self.service.account_id
             }
         }
 
@@ -48,13 +51,19 @@ class BookingModel(db.Model):
     
 
     @classmethod
-    def find_by_account_id(cls, account_id):
+    def find_by_account_id(cls, account_id, limit, offset):
         return cls.query.join(
                 ServiceModel
             ).join(
                 AccountModel
             ).filter(
                 AccountModel.id == account_id
+            ).order_by(
+                desc(cls.id)
+            ).limit(
+                limit
+            ).offset(
+                offset
             ).all()
 
 
@@ -68,7 +77,7 @@ class BookingModel(db.Model):
                 AccountModel
             ).filter(
                 AccountModel.id == account_id
-            )
+            ).all()
 
     @classmethod
     def find_by_id(cls, id):

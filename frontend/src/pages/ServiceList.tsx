@@ -34,6 +34,9 @@ const stylesInUse = makeStyles(() =>
 		listItem: {
 			paddingLeft: 0
 		},
+		itemMeta: {
+			margin: '2px 0 5px'
+		},
 		listTitle: {
 			fontSize: '1.2em',
 			fontWeight: 'bold',
@@ -75,12 +78,20 @@ const ServiceList = ({ account }: Props):React.ReactElement => {
 							}
 							secondary={
 								<React.Fragment>
-									<Link
-										component={RouterLink}
-										to={`/account/${account.id}/services/${item.id}/edit`}
-									>
-														Edit service
-									</Link>	
+									<div>
+										<div className={classes.itemMeta}>
+											<span>Hours: {item.startTime.substr(0, 5)} - {item.endTime.substr(0, 5)} | Timeslot: {item.timeSlotLen} min | Max bookings: {item.maxBookings} per slot</span>
+										</div>
+										
+										<Link
+											component={RouterLink}
+											to={`/account/${account.id}/services/${item.id}/edit`}
+										>
+														Edit
+										</Link>	
+
+									</div>
+									
 								</React.Fragment>
 							}
 						/>

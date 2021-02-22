@@ -71,10 +71,15 @@ class BookingList(Resource):
     parser.add_argument('date', location='args', type=lambda x: inputs.date(x))
     parser.add_argument('after', location='args', type=lambda x: inputs.date(x))
     parser.add_argument('before', location='args', type=lambda x: inputs.date(x))
+    parser.add_argument('limit', type=int)
+    parser.add_argument('offset', type=int)
 
     def get(self, account_id):
 
         params = BookingList.parser.parse_args()
+
+        limit = params.limit or 10
+        offset = params.offset or 0
 
         if (params.date):
             return [booking.json() for booking in BookingModel.find_by_account_id_and_date(account_id, params.date)] 
@@ -85,4 +90,4 @@ class BookingList(Resource):
         elif (params.after):
             return [booking.json() for booking in BookingModel.find_by_account_id_and_date(account_id, params.date)] 
         
-        return [booking.json() for booking in BookingModel.find_by_account_id(account_id)]
+        return [booking.json() for booking in BookingModel.find_by_account_id(account_id, limit, offset)]

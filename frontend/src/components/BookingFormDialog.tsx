@@ -20,7 +20,7 @@ interface Props {
 const BookingFormDialog = ({ 
 	bookingFormOpen, 
 	handleCloseBookingForm,
-	selectedSlot 
+	selectedSlot, 
 }: Props):React.ReactElement => {
 	return (
 		<Dialog open={bookingFormOpen} onClose={handleCloseBookingForm} aria-labelledby="form-dialog-title">

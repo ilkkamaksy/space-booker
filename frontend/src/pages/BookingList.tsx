@@ -78,6 +78,11 @@ const stylesInUse = makeStyles(() =>
 			margin: '0 0.5em',
 			width: 'auto',
 		},
+		notice: {
+			fontSize: '1em',
+			margin: '1rem 0 1.5rem',
+			color:'#111'
+		},
 	})
 )
 
@@ -112,7 +117,6 @@ const Services = ({
 	})
 
 	useEffect(() => {
-	
 		if (
 			queryAccountBookings.isSuccess && 
             queryAccountBookings.data.data
@@ -122,10 +126,17 @@ const Services = ({
 
 	}, [queryAccountBookings])
 
+	const accountBookings = bookingData.bookings.filter(item => item.service?.account_id === account.id)
+
+	if (accountBookings.length === 0) {
+		return <p className={classes.notice}>{'There are not bookings yet.'} </p>
+	}
+
+    
 	return (
 		<div className={classes.root}>
 			<List>
-				{bookingData.bookings.map(booking => {
+				{accountBookings.map(booking => {
 					const dateStr = new Date(booking.dateTime).toString()
 					const date = dateStr.split(':00 GMT')[0]
 					return (

@@ -84,7 +84,7 @@ const stylesInUse = makeStyles(() =>
 			padding: '12px 20px',
 			fontWeight: 'bold',
 			color: '#ffffff',
-			margin: '0 0.5em',
+			margin: 0,
 			width: 'auto',
 		},
 	})
@@ -164,7 +164,7 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 														component={RouterLink}
 														to={`/account/${item.id}/services`}
 													>
-														Edit services
+														Manage
 													</Link>
 													{' | '} 
 													<Link

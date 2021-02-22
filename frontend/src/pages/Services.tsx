@@ -7,10 +7,14 @@ import {
 	createStyles,
 	makeStyles,
 	Grid,
+	Link
 } from '@material-ui/core'
+
+import { ArrowLeft } from '@material-ui/icons'
 import { 
 	useParams, 
 	useHistory,
+	Link as RouterLink
 } from 'react-router-dom'
 
 import { 
@@ -42,8 +46,29 @@ const stylesInUse = makeStyles(() =>
 			paddingBottom: '50px',
 			color:'#ffffff'
 		},
+		banner: {
+			background: '#eee',
+			padding: '0.5em',
+		},
+		bannerLeft: {
+			textAlign: 'left'
+		},
+		bannerRight: {
+			textAlign: 'right'
+		},
+		bannerText: {
+			marginRight: '1em',
+			color: '#666'
+		},
 		content: {
-
+			marginTop: '1em'
+		},
+		contentLeft: {
+			borderRight: '1px solid #ddd',
+			paddingRight: '2em'
+		},
+		contentRight: {
+			paddingLeft: '4em'
 		},
 		intro: {
 			color: '#ffffff',
@@ -59,29 +84,43 @@ const stylesInUse = makeStyles(() =>
 			margin: '1rem 0 0.5rem 0',
 		},
 		heading_2: {
-			fontSize: '2rem',
+			fontSize: '1.6rem',
 			position: 'relative',
 			fontWeight: 'bold',
 			letterSpacing: -1,
-			marginBottom: '1rem',
+			marginBottom: '0.8rem',
 		},
 		introText: {
 			fontSize: '1.2rem',
 			margin: '0.5rem auto 1rem',
 		},
 		containedBtn: {
-			backgroundColor: '#6A0572',
 			padding: '12px 20px',
 			fontWeight: 'bold',
-			color: '#ffffff',
-			margin: '0 0.5em',
+			margin: 0,
 			width: 'auto',
 		},
+		textBtn: {
+			padding: '12px 0',
+			fontWeight: 'bold',
+			margin: 0,
+			width: 'auto',
+		},
+		sep: {
+			padding: '0 5px'
+		},
+		adminLink: {
+			textTransform: 'uppercase',
+			fontSize: '14px',
+			marginBottom: '1em',
+			display: 'block',
+		}
 	})
 )
 
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
+	bookingData: state.bookingData
 })
   
 interface RouteParams {
@@ -94,10 +133,9 @@ interface DispatchProps {
     setAccounts: (accounts:Account[]) => void
 }
 
-const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.ReactElement => {
+const Services = ({ accountdata, bookingData, setAccounts }: Props & DispatchProps):React.ReactElement => {
 
 	const [addNewSpacePath, setAddNewSpacePath] = useState('/dashboard')
-	const [subTitle, setSubTitle] = useState('Your services')
 	const classes = stylesInUse()
 	const history = useHistory()	
 
@@ -111,19 +149,18 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 	}
 
 	const queryAccounts = useQuery(['getAccounts', accountdata], getAccounts, { 
-		enabled: accountdata.accounts.length === 0,
+		enabled: accountdata.accounts.length < 1,
 	})
 
 	useEffect(() => {
 		if (account) {
 			setAddNewSpacePath(`/account/${account.id}/services/add`)
-			setSubTitle(`Services for ${account.name}`)
 		}
 
 		if (
 			!account &&
 			queryAccounts.isSuccess && 
-            accountdata.accounts.length === 0 && 
+            accountdata.accounts.length < 1 && 
             queryAccounts.data.data
 		) {
 			setAccounts(queryAccounts.data.data)
@@ -133,23 +170,72 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 
 	return (
 		<div className={classes.root}>
-			
+
 			<div className={classes.header}>
 				<Container maxWidth="xl">
-					<h1 className={classes.heading_1}>Manage services</h1>
+					<h1 className={classes.heading_1}>Manage {account?.name}</h1>
 					<p className={classes.introText}>
-						Manage account services.
+						Manage services and bookings.
 					</p>
 				</Container>
 			</div>
-			
+
+			<div className={classes.banner}>
+				<Container maxWidth="xl">
+					<Grid container direction="row">
+						<Grid item xs={6} className={classes.bannerLeft}>
+							<Button 
+								color="primary"
+								className={classes.textBtn}
+								variant="text"
+								disableElevation
+								onClick={handleClick('/dashboard')}
+							>
+								<ArrowLeft></ArrowLeft> Dashboard
+								
+							</Button>
+						</Grid>
+						<Grid item xs={6} className={classes.bannerRight}>
+							<Button
+								color="primary"
+								className={classes.containedBtn}
+								variant="outlined"
+								size="small"
+								disableElevation
+								onClick={handleClick(`/account/${account?.id}/edit`)}
+							>
+						Edit organization
+							</Button>
+							<span className={classes.sep}></span>
+							<Button
+								color="primary"
+								className={classes.containedBtn}
+								variant="contained"
+								size="small"
+								disableElevation
+								onClick={handleClick(`/account/${account?.id}/calendar`)}
+							>
+						View calendar
+							</Button>
+						</Grid>
+					</Grid>
+
+				</Container>
+			</div>
 
 			<div className={classes.content}>
 				<Container maxWidth="xl">
 					
 					<Grid container direction="row">
-						<Grid item xs={6}>
-							<h2 className={classes.heading_2}>{subTitle}</h2>
+						<Grid item xs={4} className={classes.contentLeft}>
+							<h2 className={classes.heading_2}>Services</h2>
+							<Link
+								component={RouterLink}
+								to={addNewSpacePath}
+								className={classes.adminLink}
+							>
+														Add new service
+							</Link>	
 							<ServiceList account={account} />
 							<Button 
 								color="primary"
@@ -162,9 +248,33 @@ const Services = ({ accountdata, setAccounts }: Props & DispatchProps):React.Rea
 						
 							</Button>
 						</Grid>
-						<Grid item xs={6}>
+						<Grid item xs={6} className={classes.contentRight}>
 							<h2 className={classes.heading_2}>Recent bookings</h2>
+							
+							<Link
+								component={RouterLink}
+								to={`/account/${account?.id}/edit`}
+								className={classes.adminLink}
+							>
+													View all
+							</Link>	
+						
+							
 							{accountId ? <BookingList account={account} /> : <></> }
+
+						
+							<Button 
+								color="primary"
+								className={classes.containedBtn}
+								variant="contained"
+								disableElevation
+							
+							>
+					View all
+					
+							</Button>
+						
+							
 						</Grid>
 					</Grid>
 
