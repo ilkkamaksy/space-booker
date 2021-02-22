@@ -112,7 +112,7 @@ const Services = ({
 		return <></>
 	}
 
-	const queryAccountBookings = useQuery(['getBookingsByAccountId', account.id], () => getBookingsByAccountId(account.id.toString()), { 
+	const queryAccountBookings = useQuery(['getBookingsByAccountId', account], () => getBookingsByAccountId({ accountId: account.id.toString(), limit: 40 }), { 
 		enabled: !!account 
 	})
 
