@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom'
 import { useQuery } from 'react-query'
 
 import { AppState } from '../store/types'
-import { setToken, setUser } from '../store/actions/user'
+import { setToken, setUser, logoutUser } from '../store/actions/user'
 
 import { me } from '../services/queries'
 
@@ -22,22 +22,24 @@ import { UserType } from '../types'
     
 const mapStateToProps = (state: AppState) => ({
 	token: state.userdata.token,
+	user: state.userdata.user
 })
   
 type Props = ReturnType<typeof mapStateToProps>;
 
 interface DispatchProps { 
     setToken: (token:string) => void,
-    setUser: (user:UserType) => void, 
+    setUser: (user:UserType|undefined) => void,
+	logoutUser: () => void 
 }
 
-const Controller = ({ token, setToken, setUser }: Props & DispatchProps):React.ReactElement => {
+const Controller = ({ token, user, setToken, setUser, logoutUser }: Props & DispatchProps):React.ReactElement => {
     
 	const query = useQuery(['me', token], () => me(token), { 
 		enabled: !!token,
 		onError: () => {
-			setToken('')
 			localStorage.removeItem('access_token')
+			logoutUser()
 		},
 	})
     
@@ -48,27 +50,31 @@ const Controller = ({ token, setToken, setUser }: Props & DispatchProps):React.R
 		}
 	}, [query])
 
+	console.log(query)
+
 	return (
 		<div>
 			<Header />
 
 			<Route exact path="/" component={Home} />
-			<Route exact path="/dashboard" component={Dashboard} />
-			<Route exact path="/add-account" component={EditAccount} />
-			<Route path='/account/:id/edit' component={EditAccount} />
+			
+			{!!user && <Route exact path="/dashboard" component={Dashboard} />}
+			{!!user && <Route exact path="/add-account" component={EditAccount} />}
+			{!!user && <Route path='/account/:id/edit' component={EditAccount} />}
+			{!!user && <Route exact path='/account/:accountId/services' component={Services} />}
+			{!!user && <Route path='/account/:accountId/services/add' component={EditService} />}
+			{!!user && <Route path='/account/:accountId/services/:serviceId/edit' component={EditService} />}
+			
 			<Route path='/account/:accountId/calendar' component={Calendar} />
-			<Route exact path='/account/:accountId/services' component={Services} />
-			<Route path='/account/:accountId/services/add' component={EditService} />
-			<Route path='/account/:accountId/services/:serviceId/edit' component={EditService} />
 
-
-			<Route exact path="/register" component={Register} />
-			<Route exact path="/login" component={Login} />
+			{!user && <Route exact path="/register" component={Register} />}
+			{!user && <Route exact path="/login" component={Login} />}
 		</div>
 	)
 }
 
 export default connect(mapStateToProps, {
 	setToken,
-	setUser
+	setUser,
+	logoutUser
 })(Controller)

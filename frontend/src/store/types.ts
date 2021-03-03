@@ -16,7 +16,7 @@ export const SET_USER = 'SET_USER'
 
 export interface SetUserAction {
     type: '@prefix/SET_USER'
-    payload: UserType
+    payload: UserType|undefined
 }
 
 export const LOGOUT = 'LOGOUT'
