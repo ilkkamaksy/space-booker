@@ -165,7 +165,7 @@ const Services = ({
 			<List>
 				{accountBookings.map(booking => {
 					const dateStr = new Date(booking.dateTime).toString()
-					const date = dateStr.split(':00 GMT')[0]
+					const date = dateStr.split(' GMT')[0]
 					return (
 						<ListItem key={booking.id} className={classes.listItem}>
 							<ListItemText
@@ -173,7 +173,7 @@ const Services = ({
 								primary={
 									<React.Fragment>
 										<div className={classes.listTitle}>
-											{`${booking.service?.name} - ${date.substr(0, date.length-5)} on ${date.substr(date.length-5, date.length)}`}
+											{`${booking.service?.name} - ${date.substr(0, date.length-3)}`}
 										</div>
 									</React.Fragment>
 								}

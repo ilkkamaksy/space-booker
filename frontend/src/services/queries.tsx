@@ -96,6 +96,18 @@ export function updateService(service:Service):Promise<UseMutationResult<Service
 	return axios.put(`${API_URL}/${API_PREFIX}/services/${service.id}`, service, config)
 }
 
+export function deleteService(service:Service):Promise<UseMutationResult<Service, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+	return axios.delete(`${API_URL}/${API_PREFIX}/services/${service.id}`, config)
+}
+
 export function getServices(account:Account|undefined):Promise<UseQueryResult<Service[], Error>> {
 	
 	const token = localStorage.getItem('access_token')

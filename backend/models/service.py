@@ -11,7 +11,7 @@ class ServiceModel(db.Model):
     endTime = db.Column(db.Time(), nullable=False)
     timeSlotLen = db.Column(db.Integer, nullable=False)
     account_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), nullable=False)
-    bookings = db.relationship('BookingModel', back_populates='service', lazy=True)
+    bookings = db.relationship('BookingModel', back_populates='service', cascade="all, delete-orphan", lazy=True)
 
     def __init__(self, name, description, maxBookings, startTime, endTime, timeSlotLen, account_id):
         self.name = name

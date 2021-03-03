@@ -17,12 +17,17 @@ import { TimePicker } from 'formik-material-ui-pickers'
 
 import DateFnsUtils from '@date-io/date-fns'
 
-import { saveService, updateService } from '../../services/queries'
+import { 
+	saveService, 
+	updateService, 
+	deleteService 
+} from '../../services/queries'
 
 import { startAction, setSingleAccount } from '../../store/actions/accounts'
+import { removeBooking } from '../../store/actions/bookings'
 
 import { AppState } from '../../store/types'
-import { Service, Account } from '../../types'
+import { Service, Account, Booking } from '../../types'
 
 
 const stylesInUse = makeStyles((theme) =>
@@ -93,6 +98,20 @@ const stylesInUse = makeStyles((theme) =>
 				borderColor: '#6A0572',
 			},
 		},
+		deleteBtn: {
+			padding: '12px 20px',
+			fontWeight: 'bold',
+			color: 'red',
+			margin: '1em 0.5em',
+			width: 'auto',
+			borderColor: 'rgba(0,0,0,0.5)',
+			'&:hover': {
+				borderColor: '#6A0572',
+			},
+		},
+		dangerZone: {
+			margin: '4em 0',
+		},
 		formColumn: {
 			
 		},
@@ -104,7 +123,7 @@ const stylesInUse = makeStyles((theme) =>
 		},
 		textAreaField: {
 			height: '100px',
-			width: '99%',
+			width: '97%',
 			lineHeight: '22px',
 			display: 'block',
 			margin: '5px 0 40px',
@@ -154,13 +173,15 @@ const formStatusProps: FormStatusProps = {
 
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
+	bookingData: state.bookingData,
 })
   
 type StateProps = ReturnType<typeof mapStateToProps>
 
 interface DispatchProps { 
-	setSingleAccount: (account:Account) => void,
+	setSingleAccount: (account:Account) => void
 	startAction: () => void
+	removeBooking: (data:Booking) => void
 }
 
 interface Props {
@@ -170,9 +191,11 @@ interface Props {
 
 const EditService = ({ 
 	accountdata, 
+	bookingData,
 	serviceToEdit, 
 	startAction, 
 	setSingleAccount,
+	removeBooking,
 	account, 
 }: StateProps & DispatchProps & Props):React.ReactElement => {
 
@@ -218,6 +241,26 @@ const EditService = ({
 			startAction()
 		}
 	})
+
+	const deleteMutation = useMutation(deleteService)
+
+	const handleDelete = (service:Service) => {
+		if (!account) {
+			return
+		}
+		deleteMutation.mutate(service)
+
+		const serviceBookings = bookingData.bookings.filter(booking => booking.service?.id === service.id)
+		serviceBookings.forEach(booking => removeBooking(booking))
+
+		const newAccount = {
+			...account,
+			services: account.services.filter(ser => ser.id !== service.id)
+		}
+		setSingleAccount(newAccount)
+
+		history.push(`/account/${account?.id}/manage`)
+	}
 
 	const saveServiceData = async (data: SpaceFormFields) => {
 		if (!account) {
@@ -285,7 +328,7 @@ const EditService = ({
 
 	}, [saveMutation, updateMutation, accountdata])
 
-	const handleClick = (path: string) => {
+	const handleRedirect = (path: string) => {
 		return () => {
 			history.push(path)
 		}
@@ -308,7 +351,7 @@ const EditService = ({
 	}
 
 	if (redirect) {
-		return <Redirect to={account ? `/account/${account.id}/services/` : '/dashboard'} />
+		return <Redirect to={account ? `/account/${account.id}/manage/` : '/dashboard'} />
 	}
 
 	return (
@@ -477,7 +520,7 @@ const EditService = ({
 										color="primary"
 										variant="outlined"
 										className={classes.outlinedBtn}
-										onClick={handleClick(account ? `/account/${account.id}/services/` : '/dashboard')}
+										onClick={handleRedirect(account ? `/account/${account.id}/manage/` : '/dashboard')}
 									>
 										{' '}
                             Cancel
@@ -501,11 +544,30 @@ const EditService = ({
 					)
 				}}			
 			</Formik>
+
+			{serviceToEdit && 
+			<div className={classes.dangerZone}>
+				<h2>Danger Zone</h2>
+				<p>Be careful here, deleting the service will wipe out all data and bookings related to it.</p>
+				<Button
+					color="primary"
+					variant="outlined"
+					className={classes.deleteBtn}
+					onClick={() => handleDelete(serviceToEdit)}
+				>
+					{' '}
+								Delete service
+				</Button>
+			</div>
+				
+			}
+			
 		</MuiPickersUtilsProvider>
 	)
 }
 
 export default connect(mapStateToProps, {
 	startAction,
-	setSingleAccount
+	setSingleAccount,
+	removeBooking
 })(EditService)

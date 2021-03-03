@@ -45,7 +45,9 @@ class ServiceSingular(Resource):
         if service:
             service.delete_from_db()
 
-            return {'message': 'service has been deleted'}
+            return {
+                'id': id
+            }, 200
 
     @jwt_required()
     def put(self, id):
