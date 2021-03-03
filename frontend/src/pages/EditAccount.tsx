@@ -13,7 +13,7 @@ import { AppState } from '../store/types'
 
 import AccountForm from '../components/forms/EditAccount'
 
-const stylesInUse = makeStyles((theme) =>
+const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
 			background: '#FFFFFF',

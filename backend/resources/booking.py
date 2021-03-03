@@ -42,7 +42,9 @@ class BookingSingular(Resource):
         if booking:
             booking.delete_from_db()
 
-            return {'message': 'booking has been deleted'}
+            return {
+                'id': id
+            }, 200
 
     @jwt_required()
     def put(self, id):
@@ -62,7 +64,7 @@ class BookingSingular(Resource):
         
         booking.save_to_db()
 
-        return booking.json(), 201
+        return booking.json(), 200
         
         
 class BookingList(Resource):

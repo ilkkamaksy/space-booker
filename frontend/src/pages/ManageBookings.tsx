@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { useQuery } from 'react-query'
 import {
@@ -7,14 +7,12 @@ import {
 	createStyles,
 	makeStyles,
 	Grid,
-	Link
 } from '@material-ui/core'
 
 import { ArrowLeft } from '@material-ui/icons'
 import { 
 	useParams, 
 	useHistory,
-	Link as RouterLink
 } from 'react-router-dom'
 
 import { 
@@ -26,7 +24,6 @@ import { setAccounts } from '../store/actions/accounts'
 import { AppState } from '../store/types'
 import { Account } from '../types'
 
-import ServiceList from './ServiceList'
 import BookingList from './BookingList'
 
 const stylesInUse = makeStyles(() =>
@@ -120,7 +117,6 @@ const stylesInUse = makeStyles(() =>
 
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
-	bookingData: state.bookingData
 })
   
 interface RouteParams {
@@ -133,9 +129,8 @@ interface DispatchProps {
     setAccounts: (accounts:Account[]) => void
 }
 
-const Services = ({ accountdata, bookingData, setAccounts }: Props & DispatchProps):React.ReactElement => {
+const ManageBookings = ({ accountdata, setAccounts }: Props & DispatchProps):React.ReactElement => {
 
-	const [addNewSpacePath, setAddNewSpacePath] = useState('/dashboard')
 	const classes = stylesInUse()
 	const history = useHistory()	
 
@@ -153,10 +148,7 @@ const Services = ({ accountdata, bookingData, setAccounts }: Props & DispatchPro
 	})
 
 	useEffect(() => {
-		if (account) {
-			setAddNewSpacePath(`/account/${account.id}/services/add`)
-		}
-
+		
 		if (
 			!account &&
 			queryAccounts.isSuccess && 
@@ -173,10 +165,7 @@ const Services = ({ accountdata, bookingData, setAccounts }: Props & DispatchPro
 
 			<div className={classes.header}>
 				<Container maxWidth="xl">
-					<h1 className={classes.heading_1}>Manage {account?.name}</h1>
-					<p className={classes.introText}>
-						Manage services and bookings.
-					</p>
+					<h1 className={classes.heading_1}>{account?.name} bookings</h1>
 				</Container>
 			</div>
 
@@ -189,9 +178,9 @@ const Services = ({ accountdata, bookingData, setAccounts }: Props & DispatchPro
 								className={classes.textBtn}
 								variant="text"
 								disableElevation
-								onClick={handleClick('/dashboard')}
+								onClick={handleClick(`/account/${account?.id}/manage`)}
 							>
-								<ArrowLeft></ArrowLeft> Dashboard
+								<ArrowLeft></ArrowLeft> Back to account
 								
 							</Button>
 						</Grid>
@@ -227,53 +216,10 @@ const Services = ({ accountdata, bookingData, setAccounts }: Props & DispatchPro
 				<Container maxWidth="xl">
 					
 					<Grid container direction="row">
-						<Grid item xs={4} className={classes.contentLeft}>
-							<h2 className={classes.heading_2}>Services</h2>
-							<Link
-								component={RouterLink}
-								to={addNewSpacePath}
-								className={classes.adminLink}
-							>
-														Add new service
-							</Link>	
-							<ServiceList account={account} />
-							<Button 
-								color="primary"
-								className={classes.containedBtn}
-								variant="contained"
-								disableElevation
-								onClick={handleClick(addNewSpacePath)}
-							>
-						Add new service
-						
-							</Button>
-						</Grid>
-						<Grid item xs={6} className={classes.contentRight}>
-							<h2 className={classes.heading_2}>Recent bookings</h2>
+						<Grid item xs={12}>
+							<h2 className={classes.heading_2}>All bookings</h2>
 							
-							<Link
-								component={RouterLink}
-								to={`/account/${account?.id}/edit`}
-								className={classes.adminLink}
-							>
-													View all
-							</Link>	
-						
-							
-							{accountId ? <BookingList account={account} /> : <></> }
-
-						
-							<Button 
-								color="primary"
-								className={classes.containedBtn}
-								variant="contained"
-								disableElevation
-							
-							>
-					View all
-					
-							</Button>
-						
+							{accountId ? <BookingList account={account} itemCount={-1} /> : <></> }						
 							
 						</Grid>
 					</Grid>
@@ -287,4 +233,4 @@ const Services = ({ accountdata, bookingData, setAccounts }: Props & DispatchPro
 
 export default connect(mapStateToProps, {
 	setAccounts,
-})(Services)
+})(ManageBookings)

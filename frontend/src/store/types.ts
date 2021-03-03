@@ -1,8 +1,9 @@
 import { UserType, Account, Booking } from '../types'
 
 export interface UserState {
-    user: UserType|undefined,
+    user: UserType|undefined
     token: string|undefined
+    loggedOut: boolean
 }
 
 export const SET_TOKEN = 'SET_TOKEN'
@@ -65,6 +66,11 @@ export interface AddBookingAction {
     payload: Booking
 }
 
+export interface RemoveBookingAction {
+    type: '@prefix/REMOVE_BOOKING'
+    payload: Booking
+}
+
 export interface SetBookingsAction {
     type: '@prefix/SET_BOOKINGS'
     payload: Booking[]
@@ -79,7 +85,7 @@ export interface SetFormVisibilityAction {
     type: '@prefix/SET_FORM_VISIBILITY'
 }
 
-export type BookingActionTypes = InitAction | AddBookingAction | SetBookingsAction | SetDateAction | SetFormVisibilityAction
+export type BookingActionTypes = InitAction | AddBookingAction | RemoveBookingAction | SetBookingsAction | SetDateAction | SetFormVisibilityAction
 
 export interface BookingState {
     bookings: Booking[]

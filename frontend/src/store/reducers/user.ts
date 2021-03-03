@@ -6,6 +6,7 @@ import {
 const initialState = {
 	user: undefined,
 	token: undefined,
+	loggedOut: false
 }
 
 const userReducer = (state = initialState, action: UserActionTypes):UserState => {
@@ -20,12 +21,14 @@ const userReducer = (state = initialState, action: UserActionTypes):UserState =>
 		return {
 			...state,
 			user: action.payload,
+			loggedOut: false,
 		}
 	case '@prefix/LOGOUT_USER' :
 		return {
 			...state,
 			user: undefined,
 			token: undefined,
+			loggedOut: true,
 		}
 	default: return state
 	}

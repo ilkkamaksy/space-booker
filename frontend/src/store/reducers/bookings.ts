@@ -32,6 +32,12 @@ const bookingReducer = (state = initialState, action: BookingActionTypes):Bookin
 			bookings: [action.payload, ...state.bookings],
 			updating: false
 		}
+	case '@prefix/REMOVE_BOOKING':
+		return {
+			...state,
+			bookings: state.bookings.filter((booking:Booking) => booking.id !== action.payload.id),
+			updating: false
+		}
 	case '@prefix/SET_BOOKINGS':
 		return {
 			...state,

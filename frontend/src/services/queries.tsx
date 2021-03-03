@@ -123,6 +123,18 @@ export function saveBooking(booking:Booking):Promise<UseMutationResult<Booking, 
 	return axios.post(`${API_URL}/${API_PREFIX}/bookings`, booking, config)
 }
 
+export function deleteBooking(booking:Booking):Promise<UseMutationResult<Booking, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+	return axios.delete(`${API_URL}/${API_PREFIX}/bookings/${booking.id}`, config)
+}
+
 export function getBookingsByAccountId({ accountId, limit=10 }:{ accountId: string|undefined, limit?: number }):Promise<UseQueryResult<Booking[], Error>> {
 	
 	const token = localStorage.getItem('access_token')

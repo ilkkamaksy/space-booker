@@ -162,7 +162,7 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 												<React.Fragment>
 													<Link
 														component={RouterLink}
-														to={`/account/${item.id}/services`}
+														to={`/account/${item.id}/manage`}
 													>
 														Manage
 													</Link>

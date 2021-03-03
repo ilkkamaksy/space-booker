@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { useQuery } from 'react-query'
+import { useQuery, useMutation } from 'react-query'
 import {
 	createStyles,
 	makeStyles,
 	List,
 	ListItem,
-	ListItemText
+	ListItemText,
+	Button
 } from '@material-ui/core'
 
 import { 
-	getBookingsByAccountId
+	getBookingsByAccountId,
+	deleteBooking,
 } from '../services/queries'
 
-import { setBookings } from '../store/actions/bookings'
+import { setBookings, removeBooking } from '../store/actions/bookings'
 
 import { AppState } from '../store/types'
 import { Booking, Account } from '../types'
@@ -78,6 +80,13 @@ const stylesInUse = makeStyles(() =>
 			margin: '0 0.5em',
 			width: 'auto',
 		},
+		textBtn: {
+			padding: 0,
+			fontWeight: 'normal',
+			margin: '0 0 0 2px',
+			width: 'auto',
+			textTransform: 'none'
+		},
 		notice: {
 			fontSize: '1em',
 			margin: '1rem 0 1.5rem',
@@ -94,16 +103,20 @@ type StateProps = ReturnType<typeof mapStateToProps>
 
 type Props = {
     account: Account|undefined
+	itemCount: number
 }
 
 interface DispatchProps { 
 	setBookings: (bookings: Booking[]) => void
+	removeBooking: (booking: Booking) => void
 }
 
 const Services = ({ 
 	account, 
 	bookingData,
-	setBookings 
+	itemCount,
+	setBookings,
+	removeBooking 
 }: Props & StateProps & DispatchProps):React.ReactElement => {
 
 	const classes = stylesInUse()
@@ -116,6 +129,12 @@ const Services = ({
 		enabled: !!account 
 	})
 
+	const deleteMutation = useMutation(deleteBooking)
+
+	const handleDelete = (booking:Booking) => {
+		deleteMutation.mutate(booking)
+	}
+
 	useEffect(() => {
 		if (
 			queryAccountBookings.isSuccess && 
@@ -124,15 +143,23 @@ const Services = ({
 			setBookings(queryAccountBookings.data.data)
 		}
 
-	}, [queryAccountBookings])
+		if (
+			deleteMutation.isSuccess &&
+			deleteMutation.data?.data
+		) {
+			removeBooking(deleteMutation.data.data)
+		}
 
-	const accountBookings = bookingData.bookings.filter(item => item.service?.account_id === account.id)
+	}, [queryAccountBookings, deleteMutation])
+
+	const accountBookings = itemCount > 0 
+		? bookingData.bookings.filter(item => item.service?.account_id === account.id).slice(0, itemCount)
+		: bookingData.bookings.filter(item => item.service?.account_id === account.id)
 
 	if (accountBookings.length === 0) {
 		return <p className={classes.notice}>{'There are not bookings yet.'} </p>
 	}
 
-    
 	return (
 		<div className={classes.root}>
 			<List>
@@ -154,6 +181,16 @@ const Services = ({
 									<React.Fragment>
 										<div>
 											{`User: ${booking.email}`}
+											<Button 
+												color="primary"
+												className={classes.textBtn}
+												variant="text"
+												disableElevation
+												onClick={() => handleDelete(booking)}
+											>
+												Cancel
+								
+											</Button>
 										</div>	
 									</React.Fragment>
 								}
@@ -167,5 +204,6 @@ const Services = ({
 }
 
 export default connect(mapStateToProps, {
-	setBookings
+	setBookings,
+	removeBooking
 })(Services)

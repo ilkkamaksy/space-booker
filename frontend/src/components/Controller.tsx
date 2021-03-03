@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Route } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 import { useQuery } from 'react-query'
 
 import { AppState } from '../store/types'
@@ -14,7 +14,8 @@ import Register from './forms/Register'
 import Login from './forms/Login'
 import Dashboard from '../pages/Dashboard'
 import EditAccount from '../pages/EditAccount'
-import Services from '../pages/Services'
+import ManageAccount from '../pages/ManageAccount'
+import ManageBookings from '../pages/ManageBookings'
 import EditService from '../pages/EditService'
 import Calendar from './Calendar'
 
@@ -22,7 +23,8 @@ import { UserType } from '../types'
     
 const mapStateToProps = (state: AppState) => ({
 	token: state.userdata.token,
-	user: state.userdata.user
+	user: state.userdata.user,
+	loggedOut: state.userdata.loggedOut,
 })
   
 type Props = ReturnType<typeof mapStateToProps>;
@@ -33,7 +35,14 @@ interface DispatchProps {
 	logoutUser: () => void 
 }
 
-const Controller = ({ token, user, setToken, setUser, logoutUser }: Props & DispatchProps):React.ReactElement => {
+const Controller = ({ 
+	token, 
+	user, 
+	loggedOut,
+	setToken, 
+	setUser, 
+	logoutUser 
+}: Props & DispatchProps):React.ReactElement => {
     
 	const query = useQuery(['me', token], () => me(token), { 
 		enabled: !!token,
@@ -52,6 +61,10 @@ const Controller = ({ token, user, setToken, setUser, logoutUser }: Props & Disp
 
 	console.log(query)
 
+	if (loggedOut) {
+		window.location.href = '/'
+	}
+
 	return (
 		<div>
 			<Header />
@@ -59,11 +72,15 @@ const Controller = ({ token, user, setToken, setUser, logoutUser }: Props & Disp
 			<Route exact path="/" component={Home} />
 			
 			{!!user && <Route exact path="/dashboard" component={Dashboard} />}
+
 			{!!user && <Route exact path="/add-account" component={EditAccount} />}
 			{!!user && <Route path='/account/:id/edit' component={EditAccount} />}
-			{!!user && <Route exact path='/account/:accountId/services' component={Services} />}
+			
 			{!!user && <Route path='/account/:accountId/services/add' component={EditService} />}
 			{!!user && <Route path='/account/:accountId/services/:serviceId/edit' component={EditService} />}
+
+			{!!user && <Route exact path='/account/:accountId/manage' component={ManageAccount} />}
+			{!!user && <Route path='/account/:accountId/bookings' component={ManageBookings} />}
 			
 			<Route path='/account/:accountId/calendar' component={Calendar} />
 

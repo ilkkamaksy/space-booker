@@ -17,6 +17,13 @@ export function addBooking(booking:Booking):BookingActionTypes {
 	}
 }
 
+export function removeBooking(booking:Booking):BookingActionTypes {
+	return {
+		type: '@prefix/REMOVE_BOOKING',
+		payload: booking
+	}
+}
+
 export const setBookings = (bookings:Booking[]):BookingActionTypes =>  {
 	return {
 		type: '@prefix/SET_BOOKINGS',
