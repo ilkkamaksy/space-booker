@@ -214,6 +214,7 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 			accountdata.updating
 		) {
 			addAccount(newAccount)
+			history.goBack()
 		}
 
 		const updatedAccount = updateMutation.data?.data
@@ -224,11 +225,12 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 			accountdata.updating
 		) {
 			setSingleAccount(updatedAccount)
+			history.goBack()
 		}		
 
 	}, [saveMutation, updateMutation, accountdata])
 
-	const handleClick = (path: string) => {
+	const handleNavigationEvent = (path: string) => {
 		return () => {
 			history.push(path)
 		}
@@ -337,7 +339,7 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 									color="primary"
 									variant="outlined"
 									className={classes.outlinedBtn}
-									onClick={handleClick('/dashboard')}
+									onClick={() => history.goBack()}
 								>
 									{' '}
                             Cancel

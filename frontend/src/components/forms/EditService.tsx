@@ -260,6 +260,7 @@ const EditService = ({
 		setSingleAccount(newAccount)
 
 		history.push(`/account/${account?.id}/manage`)
+		
 	}
 
 	const saveServiceData = async (data: SpaceFormFields) => {
@@ -326,13 +327,7 @@ const EditService = ({
 			setRedirect(true)
 		}		
 
-	}, [saveMutation, updateMutation, accountdata])
-
-	const handleRedirect = (path: string) => {
-		return () => {
-			history.push(path)
-		}
-	}    
+	}, [saveMutation, updateMutation, accountdata])  
 
 	const defaultStartTime = new Date()
 	defaultStartTime.setHours(9)
@@ -520,7 +515,7 @@ const EditService = ({
 										color="primary"
 										variant="outlined"
 										className={classes.outlinedBtn}
-										onClick={handleRedirect(account ? `/account/${account.id}/manage/` : '/dashboard')}
+										onClick={() => history.goBack()}
 									>
 										{' '}
                             Cancel
