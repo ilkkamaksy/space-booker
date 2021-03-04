@@ -23,6 +23,13 @@ export function addAccount(account:Account):AccountActionTypes {
 	}
 }
 
+export function removeAccount(account:Account):AccountActionTypes {
+	return {
+		type: '@prefix/REMOVE_ACCOUNT',
+		payload: account
+	}
+}
+
 export const setAccounts = (accounts:Account[]):AccountActionTypes =>  {
 	return {
 		type: '@prefix/SET_ACCOUNTS',

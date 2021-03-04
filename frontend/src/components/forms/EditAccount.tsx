@@ -12,9 +12,19 @@ import {
 	createStyles,
 } from '@material-ui/core'
 
-import { saveAccount, updateAccount } from '../../services/queries'
+import { 
+	saveAccount, 
+	updateAccount,
+	deleteAccount
+} from '../../services/queries'
 
-import { setAccounts, addAccount, startAction, setSingleAccount } from '../../store/actions/accounts'
+import { 
+	setAccounts, 
+	addAccount, 
+	removeAccount,
+	startAction, 
+	setSingleAccount 
+} from '../../store/actions/accounts'
 
 import { AppState } from '../../store/types'
 import { Account } from '../../types'
@@ -87,6 +97,20 @@ const stylesInUse = makeStyles((theme) =>
 				borderColor: '#6A0572',
 			},
 		},
+		deleteBtn: {
+			padding: '12px 20px',
+			fontWeight: 'bold',
+			color: 'red',
+			margin: '1em 0.5em',
+			width: 'auto',
+			borderColor: 'rgba(0,0,0,0.5)',
+			'&:hover': {
+				borderColor: '#6A0572',
+			},
+		},
+		dangerZone: {
+			margin: '4em 0',
+		},
 		textField: {
 			margin: '5px 0 30px',
 			'& > *': {
@@ -136,6 +160,7 @@ type StateProps = ReturnType<typeof mapStateToProps>
 
 interface DispatchProps { 
 	addAccount: (account:Account) => void, 
+	removeAccount: (account:Account) => void, 
 	setSingleAccount: (account:Account) => void,
 	startAction: () => void
 }
@@ -144,7 +169,14 @@ interface Props {
 	accountToEdit: Account|undefined
 }
 
-const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setSingleAccount }: StateProps & DispatchProps & Props):React.ReactElement => {
+const EditAccount = ({ 
+	accountdata, 
+	addAccount, 
+	removeAccount,
+	accountToEdit, 
+	startAction, 
+	setSingleAccount 
+}: StateProps & DispatchProps & Props):React.ReactElement => {
 
 	const history = useHistory()
 
@@ -230,145 +262,169 @@ const EditAccount = ({ accountdata, addAccount, accountToEdit, startAction, setS
 
 	}, [saveMutation, updateMutation, accountdata])
 
-	const handleNavigationEvent = (path: string) => {
-		return () => {
-			history.push(path)
+	const deleteMutation = useMutation(deleteAccount)
+
+	const handleDelete = (account:Account) => {
+		if (!account) {
+			return
 		}
+		deleteMutation.mutate(account)
+		removeAccount(account)
+		history.push('/dashboard')
+		
 	}    
 	
 	return (
-		<Formik
-			initialValues={{
-				name: accountToEdit ? accountToEdit.name : '',
-				siteUrl: accountToEdit ? accountToEdit.siteUrl : '',
-				description: accountToEdit ? accountToEdit.description : ''
-			}}
-			onSubmit={(values: AccountFormFields, actions) => {
-				saveAccountData(values)
-				setTimeout(() => {
-					actions.setSubmitting(false)
-				}, 400)
-			}}
-			validationSchema={AccountSchema}
-		>
-			{(props: FormikProps<AccountFormFields>) => {
-				const {
-					handleBlur,
-					handleChange,
-					values,
-					isSubmitting,
-					touched,
-					errors,
-				} = props
+		<div className={classes.root}>
+			<Formik
+				initialValues={{
+					name: accountToEdit ? accountToEdit.name : '',
+					siteUrl: accountToEdit ? accountToEdit.siteUrl : '',
+					description: accountToEdit ? accountToEdit.description : ''
+				}}
+				onSubmit={(values: AccountFormFields, actions) => {
+					saveAccountData(values)
+					setTimeout(() => {
+						actions.setSubmitting(false)
+					}, 400)
+				}}
+				validationSchema={AccountSchema}
+			>
+				{(props: FormikProps<AccountFormFields>) => {
+					const {
+						handleBlur,
+						handleChange,
+						values,
+						isSubmitting,
+						touched,
+						errors,
+					} = props
 
-				return (
+					return (
 						
 							
-					<Form>
-						<Grid container direction="row">
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="name"
-									name="name"
-									type="text"
-									label="Organisation name"
-									variant="outlined"
-									value={values.name}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.name && errors.name
-											? errors.name
-											: ''
-									}
-									error={touched.name && errors.name ? true : false}
-								/>
-							</Grid>
+						<Form>
+							<Grid container direction="row">
+								<Grid item className={classes.textField} xs={8}>
+									<TextField
+										id="name"
+										name="name"
+										type="text"
+										label="Organisation name"
+										variant="outlined"
+										value={values.name}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.name && errors.name
+												? errors.name
+												: ''
+										}
+										error={touched.name && errors.name ? true : false}
+									/>
+								</Grid>
 
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="siteUrl"
-									name="siteUrl"
-									type="siteUrl"
-									label="Website"
-									variant="outlined"
-									value={values.siteUrl}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.siteUrl && errors.siteUrl
-											? errors.siteUrl
-											: ''
-									}
-									error={touched.siteUrl && errors.siteUrl ? true : false}
-								/>
-							</Grid>
+								<Grid item className={classes.textField} xs={8}>
+									<TextField
+										id="siteUrl"
+										name="siteUrl"
+										type="siteUrl"
+										label="Website"
+										variant="outlined"
+										value={values.siteUrl}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.siteUrl && errors.siteUrl
+												? errors.siteUrl
+												: ''
+										}
+										error={touched.siteUrl && errors.siteUrl ? true : false}
+									/>
+								</Grid>
 
-							<Grid item className={classes.textField} xs={8}>
-								<TextField
-									id="description"
-									name="description"
-									type="description"
-									label="Description"
-									variant="outlined"
-									value={values.description}
-									onChange={handleChange}
-									onBlur={handleBlur}
-									helperText={
-										touched.description && errors.description
-											? errors.description
-											: ''
-									}
-									error={touched.description && errors.description ? true : false}
-								/>
-							</Grid>
+								<Grid item className={classes.textField} xs={8}>
+									<TextField
+										id="description"
+										name="description"
+										type="description"
+										label="Description"
+										variant="outlined"
+										value={values.description}
+										onChange={handleChange}
+										onBlur={handleBlur}
+										helperText={
+											touched.description && errors.description
+												? errors.description
+												: ''
+										}
+										error={touched.description && errors.description ? true : false}
+									/>
+								</Grid>
 
-							<Grid item className={classes.submitButton} xs={6}>
-								<Button
-									color="primary"
-									type="submit"
-									variant="contained"
-									disabled={isSubmitting}
-									className={classes.containedBtn}
-								>
-									{' '}
+								<Grid item className={classes.submitButton} xs={6}>
+									<Button
+										color="primary"
+										type="submit"
+										variant="contained"
+										disabled={isSubmitting}
+										className={classes.containedBtn}
+									>
+										{' '}
                                         Save
-								</Button>
+									</Button>
 
-								<Button
-									color="primary"
-									variant="outlined"
-									className={classes.outlinedBtn}
-									onClick={() => history.goBack()}
-								>
-									{' '}
+									<Button
+										color="primary"
+										variant="outlined"
+										className={classes.outlinedBtn}
+										onClick={() => history.goBack()}
+									>
+										{' '}
                             Cancel
-								</Button>
-								{showFormStatus && (
-									<div className="formStatus">
-										{formStatus.type === 'success' ? (
-											<p className={classes.successMessage}>
-												{formStatus.message}
-											</p>
-										) : formStatus.type === 'error' ? (
-											<p className={classes.errorMessage}>
-												{formStatus.message}
-											</p>
-										) : null}
-									</div>
-								)}
+									</Button>
+									{showFormStatus && (
+										<div className="formStatus">
+											{formStatus.type === 'success' ? (
+												<p className={classes.successMessage}>
+													{formStatus.message}
+												</p>
+											) : formStatus.type === 'error' ? (
+												<p className={classes.errorMessage}>
+													{formStatus.message}
+												</p>
+											) : null}
+										</div>
+									)}
+								</Grid>
 							</Grid>
-						</Grid>
-					</Form>
-				)
-			}}			
-		</Formik>
+						</Form>
+					)
+				}}
+			
+			</Formik>
+			{accountToEdit && 
+			<div className={classes.dangerZone}>
+				<h2>Danger Zone</h2>
+				<p>Be careful here, deleting the organization will wipe out all data related to it.</p>
+				<Button
+					color="primary"
+					variant="outlined"
+					className={classes.deleteBtn}
+					onClick={() => handleDelete(accountToEdit)}
+				>
+					{' '}
+						Delete organization
+				</Button>
+			</div>}
+		</div>
 	)
 }
 
 export default connect(mapStateToProps, {
 	setAccounts,
 	addAccount,
+	removeAccount,
 	startAction,
 	setSingleAccount
 })(EditAccount)

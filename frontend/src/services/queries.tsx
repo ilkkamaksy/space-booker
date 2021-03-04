@@ -46,6 +46,18 @@ export function updateAccount(account:Account):Promise<UseMutationResult<Account
 	return axios.put(`${API_URL}/${API_PREFIX}/accounts/${account.id}`, account, config)
 }
 
+export function deleteAccount(account:Account):Promise<UseMutationResult<Account, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+	return axios.delete(`${API_URL}/${API_PREFIX}/accounts/${account.id}`, config)
+}
+
 export function getAccounts():Promise<UseQueryResult<Account[], Error>> {
 	
 	const token = localStorage.getItem('access_token')
