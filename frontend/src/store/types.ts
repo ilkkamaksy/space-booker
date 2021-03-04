@@ -76,6 +76,15 @@ export interface SetBookingsAction {
     payload: Booking[]
 }
 
+export interface EditBookingsAction {
+    type: '@prefix/EDIT_BOOKINGS'
+    payload: Booking[]
+}
+
+export interface ResetBookingsAction {
+    type: '@prefix/RESET_BOOKINGS'
+}
+
 export interface SetDateAction {
     type: '@prefix/SET_SELECTED_DATE'
     payload: Date
@@ -85,7 +94,7 @@ export interface SetFormVisibilityAction {
     type: '@prefix/SET_FORM_VISIBILITY'
 }
 
-export type BookingActionTypes = InitAction | AddBookingAction | RemoveBookingAction | SetBookingsAction | SetDateAction | SetFormVisibilityAction
+export type BookingActionTypes = InitAction | AddBookingAction | RemoveBookingAction | SetBookingsAction | EditBookingsAction | ResetBookingsAction | SetDateAction | SetFormVisibilityAction
 
 export interface BookingState {
     bookings: Booking[]

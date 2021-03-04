@@ -31,6 +31,19 @@ export const setBookings = (bookings:Booking[]):BookingActionTypes =>  {
 	}
 }
 
+export const editBookings = (bookings:Booking[]):BookingActionTypes =>  {
+	return {
+		type: '@prefix/EDIT_BOOKINGS',
+		payload: bookings
+	}
+}
+
+export const resetBookings = ():BookingActionTypes =>  {
+	return {
+		type: '@prefix/RESET_BOOKINGS',
+	}
+}
+
 export function setSelectedDate(date:Date):BookingActionTypes {
 	return {
 		type: '@prefix/SET_SELECTED_DATE',

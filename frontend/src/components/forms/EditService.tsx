@@ -20,11 +20,11 @@ import DateFnsUtils from '@date-io/date-fns'
 import { 
 	saveService, 
 	updateService, 
-	deleteService 
+	deleteService, 
 } from '../../services/queries'
 
 import { startAction, setSingleAccount } from '../../store/actions/accounts'
-import { removeBooking } from '../../store/actions/bookings'
+import { removeBooking, resetBookings } from '../../store/actions/bookings'
 
 import { AppState } from '../../store/types'
 import { Service, Account, Booking } from '../../types'
@@ -182,6 +182,7 @@ interface DispatchProps {
 	setSingleAccount: (account:Account) => void
 	startAction: () => void
 	removeBooking: (data:Booking) => void
+	resetBookings: () => void
 }
 
 interface Props {
@@ -196,6 +197,7 @@ const EditService = ({
 	startAction, 
 	setSingleAccount,
 	removeBooking,
+	resetBookings,
 	account, 
 }: StateProps & DispatchProps & Props):React.ReactElement => {
 
@@ -324,6 +326,7 @@ const EditService = ({
 				services: account.services.map(service => service.id === updatedService.id ? updatedService : service)
 			}
 			setSingleAccount(updatedAccount)
+			resetBookings()
 			setRedirect(true)
 		}		
 
@@ -564,5 +567,6 @@ const EditService = ({
 export default connect(mapStateToProps, {
 	startAction,
 	setSingleAccount,
-	removeBooking
+	removeBooking,
+	resetBookings
 })(EditService)
