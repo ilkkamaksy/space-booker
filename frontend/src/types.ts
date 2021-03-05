@@ -1,4 +1,5 @@
 export interface UserType {
+    id?: number
     username: string|undefined
     email: string|undefined
 }
@@ -16,6 +17,18 @@ export interface LoginUserInput {
 
 export interface AuthToken {
     access_token?: string
+}
+
+export interface Role {
+    id: number
+    role: string
+}
+
+export interface UserAccountRole {
+    id: number
+    role: Role
+    account_id: number
+    user: UserType
 }
 
 export interface Booking {
@@ -72,4 +85,5 @@ export interface Account {
     siteUrl: string|undefined
     description: string|undefined
     services: Service[]
+    user_roles: UserAccountRole[]
 }

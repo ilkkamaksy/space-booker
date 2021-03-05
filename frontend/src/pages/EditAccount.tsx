@@ -13,6 +13,10 @@ import { AppState } from '../store/types'
 
 import AccountForm from '../components/forms/EditAccount'
 
+import NotAllowed from '../components/NotAllowed'
+
+import { isAdmin, isOwner } from '../utils/helpers'
+
 const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
@@ -71,11 +75,12 @@ interface RouteParams {
   
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
+	me: state.userdata.user
 })
   
 type Props = ReturnType<typeof mapStateToProps>
 
-const EditAccount = ({ accountdata }: Props):React.ReactElement => {
+const EditAccount = ({ accountdata, me }: Props):React.ReactElement => {
 
 	const { id } = useParams<RouteParams>()
 
@@ -83,6 +88,10 @@ const EditAccount = ({ accountdata }: Props):React.ReactElement => {
 	const title = id ? 'Edit organization' : 'Add new organization'
 
 	const classes = stylesInUse()
+
+	if (!me || accountToEdit && !(isAdmin(me, accountToEdit) || isOwner(me, accountToEdit))) {
+		return <NotAllowed />
+	}
 
 	return (
 		<div className={classes.root}>

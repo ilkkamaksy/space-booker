@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
-import { useQuery } from 'react-query'
 import {
 	Container,
 	Button,
@@ -14,13 +13,12 @@ import {
 import { Link as RouterLink } from 'react-router-dom'
 
 import { useHistory } from 'react-router-dom'
-
-import { getAccounts } from '../services/queries'
-
-import { setAccounts } from '../store/actions/accounts'
-
 import { AppState } from '../store/types'
-import { Account } from '../types'
+
+import { isAdmin, isOwner } from '../utils/helpers'
+
+import NotAllowed from '../components/NotAllowed'
+
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -79,6 +77,14 @@ const stylesInUse = makeStyles(() =>
 			fontWeight: 'bold',
 			color:'#000'
 		},
+		itemsLeft: {
+			display: 'inline-block'
+		},
+		sep: {
+			borderLeft: '1px solid #ddd',
+			padding: '0 4px 0 0',
+			margin: '0 4px 0 8px'
+		},
 		containedBtn: {
 			backgroundColor: '#6A0572',
 			padding: '12px 20px',
@@ -92,17 +98,19 @@ const stylesInUse = makeStyles(() =>
 
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
+	me: state.userdata.user
 })
   
 type Props = ReturnType<typeof mapStateToProps>
 
-interface DispatchProps { 
-    setAccounts: (accounts:Account[]) => void
-}
-
-const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.ReactElement => {
+const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
+
+	if (!me && !accountdata.updating) {
+		return <NotAllowed />
+	}
+
 	const history = useHistory()
 
 	const handleClick = (path: string) => {
@@ -111,16 +119,6 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 		}
 	}
 
-	const query = useQuery(['getAccounts', accountdata], getAccounts, { 
-		enabled: accountdata.accounts.length === 0,
-	})
-
-	useEffect(() => {
-		if (query.isSuccess && accountdata.accounts.length === 0 && query.data.data) {
-			setAccounts(query.data.data)
-		}
-	}, [query, accountdata])
-	
 	return (
 		<div className={classes.root}>
 			
@@ -132,8 +130,9 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 					</p>
 				</Container>
 			</div>
-			
 
+			
+			
 			<div className={classes.content}>
 				<Container maxWidth="xl">
 					<h2 className={classes.heading_2}>Your organizations</h2>
@@ -152,7 +151,7 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 													<Link
 														className={classes.listTitle}
 														component={RouterLink}
-														to={`/account/${item.id}/services`}
+														to={!(isAdmin(me, item) || isOwner(me, item)) ? `/account/${item.id}/calendar` : `/account/${item.id}/manage`}
 													>
 														{item.name}
 													</Link>
@@ -160,20 +159,25 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 											}
 											secondary={
 												<React.Fragment>
-													<Link
-														component={RouterLink}
-														to={`/account/${item.id}/manage`}
-													>
-														Manage
-													</Link>
-													{' | '} 
-													<Link
-														component={RouterLink}
-														to={`/account/${item.id}/edit`}
-													>
-														Edit details
-													</Link>
-													{' | '} 
+													{(isAdmin(me, item) || isOwner(me, item)) && 
+													<div className={classes.itemsLeft}>
+														<Link
+															component={RouterLink}
+															to={`/account/${item.id}/manage`}
+														>
+															Manage
+														</Link>
+														<span className={classes.sep} />
+														<Link
+															component={RouterLink}
+															to={`/account/${item.id}/edit`}
+														>
+															Edit details
+														</Link>
+														<span className={classes.sep} />
+													</div>
+													}
+													
 													<Link
 														component={RouterLink}
 														to={`/account/${item.id}/calendar`}
@@ -206,6 +210,4 @@ const Dashboard = ({ accountdata, setAccounts }: Props & DispatchProps):React.Re
 	)
 }
 
-export default connect(mapStateToProps, {
-	setAccounts
-})(Dashboard)
+export default connect(mapStateToProps)(Dashboard)

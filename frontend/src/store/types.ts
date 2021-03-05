@@ -1,4 +1,4 @@
-import { UserType, Account, Booking } from '../types'
+import { UserType, Account, UserAccountRole, Booking } from '../types'
 
 export interface UserState {
     user: UserType|undefined
@@ -41,6 +41,11 @@ export interface AddAccountAction {
     payload: Account
 }
 
+export interface RemoveAccountAction {
+    type: '@prefix/REMOVE_ACCOUNT'
+    payload: Account
+}
+
 export interface SetAccountsAction {
     type: '@prefix/SET_ACCOUNTS'
     payload: Account[]
@@ -59,7 +64,7 @@ export interface DoneAction {
     type: '@prefix/DONE_ACTION'
 }
 
-export type AccountActionTypes = AddAccountAction | SetAccountsAction | SetSingleAccountAction | InitAction | DoneAction
+export type AccountActionTypes = AddAccountAction | RemoveAccountAction | SetAccountsAction | SetSingleAccountAction | InitAction | DoneAction
 
 export interface AddBookingAction {
     type: '@prefix/ADD_BOOKING'

@@ -14,6 +14,10 @@ import { AppState } from '../store/types'
 
 import ServiceForm from '../components/forms/EditService'
 
+import NotAllowed from '../components/NotAllowed'
+
+import { isAdmin, isOwner } from '../utils/helpers'
+
 const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
@@ -73,11 +77,12 @@ interface RouteParams {
   
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
+	me: state.userdata.user
 })
   
 type Props = ReturnType<typeof mapStateToProps>
 
-const EditService = ({ accountdata }: Props):React.ReactElement => {
+const EditService = ({ accountdata, me }: Props):React.ReactElement => {
 
 	const { accountId, serviceId } = useParams<RouteParams>()
 
@@ -87,6 +92,10 @@ const EditService = ({ accountdata }: Props):React.ReactElement => {
 
 	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
 	const serviceToEdit = serviceId ? account?.services.find(service => service.id === parseInt(serviceId)) : undefined
+
+	if (!account || !me || !(isAdmin(me, account) || isOwner(me, account))) {
+		return <NotAllowed />
+	}
 
 	const title = serviceId ? 'Edit space' : 'Add new space'
 

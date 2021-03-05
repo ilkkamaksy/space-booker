@@ -6,7 +6,7 @@ import { Account } from '../../types'
 
 const initialState = {
 	accounts: [],
-	updating: false
+	updating: true,
 }
 
 const accountReducer = (state = initialState, action: AccountActionTypes):AccountState => {
@@ -27,10 +27,17 @@ const accountReducer = (state = initialState, action: AccountActionTypes):Accoun
 			accounts: [action.payload, ...state.accounts],
 			updating: false
 		}
+	case '@prefix/REMOVE_ACCOUNT':
+		return {
+			...state,
+			accounts: state.accounts.filter((account:Account) => account.id !== action.payload.id),
+			updating: false
+		}
 	case '@prefix/SET_ACCOUNTS':
 		return {
 			...state,
 			accounts: action.payload,
+			updating: false
 		}
 	case '@prefix/SET_SINGLE_ACCOUNT':
 		return {
