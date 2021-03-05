@@ -6,10 +6,12 @@ export const dateString = (date:Date):string => {
 		.split('T')[0]
 }
 
-export const isOwner = (user:UserType, account: Account):boolean => {
+export const isOwner = (user:UserType|undefined, account: Account):boolean => {
+	if (!user) {
+		return false
+	}
 	const currentUserRole = account.user_roles.find(user_role => user_role.user.username === user?.username)
 	if (
-		!user || 
 		!currentUserRole ||
 		currentUserRole.role.role !== 'owner'
 	) {
@@ -19,10 +21,12 @@ export const isOwner = (user:UserType, account: Account):boolean => {
 	return true
 }
 
-export const isAdmin = (user:UserType, account: Account):boolean => {
+export const isAdmin = (user:UserType|undefined, account: Account):boolean => {
+	if (!user) {
+		return false
+	}
 	const currentUserRole = account.user_roles.find(user_role => user_role.user.username === user?.username)
 	if (
-		!user || 
 		!currentUserRole ||
 		currentUserRole.role.role !== 'admin'
 	) {
@@ -32,10 +36,12 @@ export const isAdmin = (user:UserType, account: Account):boolean => {
 	return true
 }
 
-export const isUser = (user:UserType, account: Account):boolean => {
+export const isUser = (user:UserType|undefined, account: Account):boolean => {
+	if (!user) {
+		return false
+	}
 	const currentUserRole = account.user_roles.find(user_role => user_role.user.username === user?.username)
 	if (
-		!user || 
 		!currentUserRole ||
 		currentUserRole.role.role !== 'user'
 	) {

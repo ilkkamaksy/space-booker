@@ -18,7 +18,7 @@ import { AppState } from '../store/types'
 import { isAdmin, isOwner } from '../utils/helpers'
 
 import NotAllowed from '../components/NotAllowed'
-import Loader from '../components/Loader'
+
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -107,7 +107,7 @@ const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
 
-	if (!me) {
+	if (!me && !accountdata.updating) {
 		return <NotAllowed />
 	}
 
@@ -131,35 +131,35 @@ const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
 				</Container>
 			</div>
 
-			{accountdata.updating ? <Loader /> : 
 			
-				<div className={classes.content}>
-					<Container maxWidth="xl">
-						<h2 className={classes.heading_2}>Your organizations</h2>
+			
+			<div className={classes.content}>
+				<Container maxWidth="xl">
+					<h2 className={classes.heading_2}>Your organizations</h2>
 				
-						{accountdata.accounts.length === 0 
-							? <p className={classes.notice}>{'You haven\'t added any organizations yet. Add one to get started!'} </p>
+					{accountdata.accounts.length === 0 
+						? <p className={classes.notice}>{'You haven\'t added any organizations yet. Add one to get started!'} </p>
 						
-							: <List>
-								{accountdata.accounts.map(item => {
-									return (
-										<ListItem key={item.id} className={classes.listItem}>
-											<ListItemText
-												className={classes.heading_2}
-												primary={
-													<React.Fragment>
-														<Link
-															className={classes.listTitle}
-															component={RouterLink}
-															to={!(isAdmin(me, item) || isOwner(me, item)) ? `/account/${item.id}/calendar` : `/account/${item.id}/manage`}
-														>
-															{item.name}
-														</Link>
-													</React.Fragment>
-												}
-												secondary={
-													<React.Fragment>
-														{(isAdmin(me, item) || isOwner(me, item)) && 
+						: <List>
+							{accountdata.accounts.map(item => {
+								return (
+									<ListItem key={item.id} className={classes.listItem}>
+										<ListItemText
+											className={classes.heading_2}
+											primary={
+												<React.Fragment>
+													<Link
+														className={classes.listTitle}
+														component={RouterLink}
+														to={!(isAdmin(me, item) || isOwner(me, item)) ? `/account/${item.id}/calendar` : `/account/${item.id}/manage`}
+													>
+														{item.name}
+													</Link>
+												</React.Fragment>
+											}
+											secondary={
+												<React.Fragment>
+													{(isAdmin(me, item) || isOwner(me, item)) && 
 													<div className={classes.itemsLeft}>
 														<Link
 															component={RouterLink}
@@ -176,37 +176,36 @@ const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
 														</Link>
 														<span className={classes.sep} />
 													</div>
-														}
+													}
 													
-														<Link
-															component={RouterLink}
-															to={`/account/${item.id}/calendar`}
-														>
+													<Link
+														component={RouterLink}
+														to={`/account/${item.id}/calendar`}
+													>
 														View Calendar
-														</Link>	
-													</React.Fragment>
-												}
-											/>
-										</ListItem>
-									) 
-								})}
-							</List>
-						}
+													</Link>	
+												</React.Fragment>
+											}
+										/>
+									</ListItem>
+								) 
+							})}
+						</List>
+					}
 
 					
-						<Button 
-							color="primary"
-							className={classes.containedBtn}
-							variant="contained"
-							disableElevation
-							onClick={handleClick('/add-account')}
-						>
+					<Button 
+						color="primary"
+						className={classes.containedBtn}
+						variant="contained"
+						disableElevation
+						onClick={handleClick('/add-account')}
+					>
 						Add new organization
 						
-						</Button>
-					</Container>
-				</div>
-			}
+					</Button>
+				</Container>
+			</div>
 		</div>
 	)
 }

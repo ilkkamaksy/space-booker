@@ -1,5 +1,5 @@
 import React from 'react'
-import { LinearProgress } from '@material-ui/core'
+import { CircularProgress } from '@material-ui/core'
 
 import {
 	createStyles,
@@ -9,12 +9,12 @@ import {
 const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
-			display: 'flex',
-			alignItems: 'center',
-			minHeight: '600px',
-			height: '100vh',
 			width: '100%',
-			justifyContent: 'center'
+			padding: '6em 0',
+			textAlign: 'center',
+			'& > * + *': {
+				marginTop: '5em',
+			},
 		},
 	})
 )
@@ -25,7 +25,7 @@ const Loader = ():React.ReactElement => {
 
 	return (
 		<div className={classes.root}>
-			<LinearProgress />
+			<CircularProgress color="secondary" />
 		</div>
 	)
 }
