@@ -9,7 +9,9 @@ import {
 	Account,
 	Service,
 	ServiceInput,
-	Booking
+	Booking,
+	UserAccountRole,
+	Role
 } from '../types'
 import { API_URL, API_PREFIX } from '../utils/config'
 
@@ -44,6 +46,27 @@ export function updateAccount(account:Account):Promise<UseMutationResult<Account
 	}
 
 	return axios.put(`${API_URL}/${API_PREFIX}/accounts/${account.id}`, account, config)
+}
+
+export function addAccountUser({ 
+	account, 
+	username, 
+	role 
+}: {
+	account: Account
+	username: string
+	role: string
+}):Promise<UseMutationResult<Account, Error>> {
+	
+	const token = localStorage.getItem('access_token')
+
+	const config = {
+		headers: {
+			'Authorization': `JWT ${token}`
+		}
+	}
+	
+	return axios.put(`${API_URL}/${API_PREFIX}/users/account/${account.id}`, { username, role }, config)
 }
 
 export function deleteAccount(account:Account):Promise<UseMutationResult<Account, Error>> {
@@ -81,7 +104,6 @@ export function getAccountById(id:string|undefined):Promise<UseQueryResult<Accou
 	}
 	return axios.get(`${API_URL}/${API_PREFIX}/accounts/${id}`, config)
 }
-
 
 export function saveService(service:ServiceInput):Promise<UseMutationResult<Service, Error>> {
 	

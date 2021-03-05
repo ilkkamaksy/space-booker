@@ -1,4 +1,4 @@
-import { Account } from '../../types'
+import { Account, UserAccountRole } from '../../types'
 import { 
 	AccountActionTypes,
 } from '../types'
@@ -43,5 +43,4 @@ export function setSingleAccount(account:Account):AccountActionTypes {
 		payload: account
 	}
 }
-
 

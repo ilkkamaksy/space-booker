@@ -1,5 +1,6 @@
 from db import db
 from models.user import UserModel
+from models.user_account_roles import UserAccountRolesModel
 
 account_users = db.Table('account_users',
     db.Column('account_id', db.Integer, db.ForeignKey('accounts.id')),
@@ -16,6 +17,9 @@ class AccountModel(db.Model):
     users = db.relationship("UserModel", secondary=account_users)
     services = db.relationship('ServiceModel', backref='account', cascade="all, delete-orphan", lazy=True)
 
+
+    user_roles = db.relationship('UserAccountRolesModel', backref='user_account_roles', cascade="all, delete-orphan")
+
     def __init__(self, name, siteUrl, description):
         self.name = name
         self.siteUrl = siteUrl
@@ -28,6 +32,7 @@ class AccountModel(db.Model):
             'siteUrl': self.siteUrl,
             'description': self.description,
             'users': [user.json() for user in self.users],
+            'user_roles': [user_role.json() for user_role in self.user_roles],
             'services': [service.json() for service in self.services]
         }
 

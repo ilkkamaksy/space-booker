@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Route, Redirect } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import { useQuery } from 'react-query'
 
 import { AppState } from '../store/types'
 import { setToken, setUser, logoutUser } from '../store/actions/user'
+import { startAction, doneAction } from '../store/actions/accounts'
 
-import { me } from '../services/queries'
+import { me, getAccounts } from '../services/queries'
+
+import { setAccounts } from '../store/actions/accounts'
 
 import Header from './Header'
 import Home from '../pages/Home'
@@ -14,52 +17,68 @@ import Register from './forms/Register'
 import Login from './forms/Login'
 import Dashboard from '../pages/Dashboard'
 import EditAccount from '../pages/EditAccount'
+import ManageAccountUsers from '../pages/ManageAccountUsers'
 import ManageAccount from '../pages/ManageAccount'
 import ManageBookings from '../pages/ManageBookings'
 import EditService from '../pages/EditService'
 import Calendar from './Calendar'
 
-import { UserType } from '../types'
+import { Account, UserType } from '../types'
     
 const mapStateToProps = (state: AppState) => ({
 	token: state.userdata.token,
 	user: state.userdata.user,
 	loggedOut: state.userdata.loggedOut,
+	accountdata: state.accountdata
 })
   
 type Props = ReturnType<typeof mapStateToProps>;
 
 interface DispatchProps { 
-    setToken: (token:string) => void,
-    setUser: (user:UserType|undefined) => void,
+    setToken: (token:string) => void
+    setUser: (user:UserType|undefined) => void
 	logoutUser: () => void 
+	setAccounts: (accounts:Account[]) => void
 }
 
 const Controller = ({ 
 	token, 
-	user, 
 	loggedOut,
+	accountdata,
+	user,
 	setToken, 
 	setUser, 
-	logoutUser 
+	logoutUser,
+	setAccounts 
 }: Props & DispatchProps):React.ReactElement => {
     
-	const query = useQuery(['me', token], () => me(token), { 
+	const queryMe = useQuery(['me', token], () => me(token), { 
 		enabled: !!token,
 		onError: () => {
 			localStorage.removeItem('access_token')
 			logoutUser()
 		},
 	})
+
+	const queryAccounts = useQuery(['getAccounts', accountdata], getAccounts, { 
+		enabled: accountdata.accounts.length === 0 && !!user,
+	})
     
 	useEffect(() => {
 		setToken(localStorage.getItem('access_token') ?? '')
-		if (query.isSuccess) {
-			setUser({ username: query.data?.data?.username, email: query.data?.data?.email })
+		if (queryMe.isSuccess) {
+			setUser({ username: queryMe.data?.data?.username, email: queryMe.data?.data?.email })
 		}
-	}, [query])
 
-	console.log(query)
+		if (
+			queryAccounts.isSuccess && 
+            accountdata.accounts.length === 0 && 
+            queryAccounts.data.data
+		) {
+			setAccounts(queryAccounts.data.data)
+		}
+
+	}, [queryMe, queryAccounts])
 
 	if (loggedOut) {
 		window.location.href = '/'
@@ -71,21 +90,23 @@ const Controller = ({
 
 			<Route exact path="/" component={Home} />
 			
-			{!!user && <Route exact path="/dashboard" component={Dashboard} />}
+			<Route exact path="/dashboard" component={Dashboard} />
 
-			{!!user && <Route exact path="/add-account" component={EditAccount} />}
-			{!!user && <Route path='/account/:id/edit' component={EditAccount} />}
+			<Route exact path="/add-account" component={EditAccount} />
+			<Route path='/account/:id/edit' component={EditAccount} />
+			<Route path='/account/:accountId/users' component={ManageAccountUsers} />
 			
-			{!!user && <Route path='/account/:accountId/services/add' component={EditService} />}
-			{!!user && <Route path='/account/:accountId/services/:serviceId/edit' component={EditService} />}
-
-			{!!user && <Route exact path='/account/:accountId/manage' component={ManageAccount} />}
-			{!!user && <Route path='/account/:accountId/bookings' component={ManageBookings} />}
+			<Route path='/account/:accountId/services/add' component={EditService} />
+			<Route path='/account/:accountId/services/:serviceId/edit' component={EditService} />
+			<Route exact path='/account/:accountId/manage' component={ManageAccount} />
+			<Route path='/account/:accountId/bookings' component={ManageBookings} />
+			
 			
 			<Route path='/account/:accountId/calendar' component={Calendar} />
 
-			{!user && <Route exact path="/register" component={Register} />}
-			{!user && <Route exact path="/login" component={Login} />}
+			<Route exact path="/register" component={Register} />
+			<Route exact path="/login" component={Login} />
+			
 		</div>
 	)
 }
@@ -93,5 +114,6 @@ const Controller = ({
 export default connect(mapStateToProps, {
 	setToken,
 	setUser,
-	logoutUser
+	logoutUser,
+	setAccounts
 })(Controller)

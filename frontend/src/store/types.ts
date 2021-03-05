@@ -1,4 +1,4 @@
-import { UserType, Account, Booking } from '../types'
+import { UserType, Account, UserAccountRole, Booking } from '../types'
 
 export interface UserState {
     user: UserType|undefined

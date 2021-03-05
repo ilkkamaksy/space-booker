@@ -6,23 +6,20 @@ import {
 	createStyles,
 	makeStyles,
 	Grid,
-	Link
 } from '@material-ui/core'
 
 import { ArrowLeft } from '@material-ui/icons'
 import { 
 	useParams, 
 	useHistory,
-	Link as RouterLink
 } from 'react-router-dom'
+
+import { isOwner } from '../utils/helpers'
 
 import { AppState } from '../store/types'
 
-import ServiceList from './ServiceList'
-import BookingList from './BookingList'
+import EditAccountUsers from '../components/forms/EditAccountUsers'
 import NotAllowed from '../components/NotAllowed'
-
-import { isAdmin, isOwner } from '../utils/helpers'
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -119,14 +116,15 @@ const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
 	me: state.userdata.user
 })
-  
+
+
 interface RouteParams {
 	accountId: string|undefined
 }
 
 type Props = ReturnType<typeof mapStateToProps>
 
-const ManageAccount = ({ accountdata, me }: Props):React.ReactElement => {
+const ManageAccountUsers = ({ accountdata, me }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
 	const history = useHistory()	
@@ -134,7 +132,7 @@ const ManageAccount = ({ accountdata, me }: Props):React.ReactElement => {
 	const { accountId } = useParams<RouteParams>()
 	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
 
-	if (!account || !me || !(isAdmin(me, account) || isOwner(me, account))) {
+	if (!account || !me || !isOwner(me, account)) {
 		return <NotAllowed />
 	}
 
@@ -149,10 +147,7 @@ const ManageAccount = ({ accountdata, me }: Props):React.ReactElement => {
 
 			<div className={classes.header}>
 				<Container maxWidth="xl">
-					<h1 className={classes.heading_1}>Manage {account?.name}</h1>
-					<p className={classes.introText}>
-						Manage services and bookings.
-					</p>
+					<h1 className={classes.heading_1}>Edit {account?.name} users</h1>
 				</Container>
 			</div>
 
@@ -165,40 +160,13 @@ const ManageAccount = ({ accountdata, me }: Props):React.ReactElement => {
 								className={classes.textBtn}
 								variant="text"
 								disableElevation
-								onClick={handleClick('/dashboard')}
+								onClick={() => history.goBack()}
 							>
-								<ArrowLeft></ArrowLeft> Dashboard
+								<ArrowLeft></ArrowLeft> Manage org
 								
 							</Button>
 						</Grid>
 						<Grid item xs={6} className={classes.bannerRight}>
-							<Button
-								color="primary"
-								className={classes.textBtn}
-								variant="text"
-								size="small"
-								disableElevation
-								onClick={handleClick(`/account/${account?.id}/edit`)}
-							>
-						Edit organization
-							</Button>
-							<span className={classes.sep}></span>
-							
-							{isOwner(me, account) && 
-								<Button
-									color="primary"
-									className={classes.textBtn}
-									variant="text"
-									size="small"
-									disableElevation
-									onClick={handleClick(`/account/${account?.id}/users`)}
-								>
-									Edit users
-								</Button>
-						
-							}
-							<span className={classes.sep}></span>	
-
 							<Button
 								color="primary"
 								className={classes.containedBtn}
@@ -219,62 +187,15 @@ const ManageAccount = ({ accountdata, me }: Props):React.ReactElement => {
 				<Container maxWidth="xl">
 					
 					<Grid container direction="row">
-						<Grid item xs={4} className={classes.contentLeft}>
-							<h2 className={classes.heading_2}>Services</h2>
-							<Link
-								component={RouterLink}
-								to={`/account/${account.id}/services/add`}
-								className={classes.adminLink}
-							>
-														Add new service
-							</Link>	
-							<ServiceList account={account} />
-							<Button 
-								color="primary"
-								className={classes.containedBtn}
-								variant="contained"
-								disableElevation
-								onClick={handleClick(`/account/${account.id}/services/add`)}
-							>
-						Add new service
-						
-							</Button>
-						</Grid>
-						<Grid item xs={6} className={classes.contentRight}>
-							<h2 className={classes.heading_2}>Recent bookings</h2>
-							
-							<Link
-								component={RouterLink}
-								to={`/account/${account?.id}/bookings`}
-								className={classes.adminLink}
-							>
-													View all
-							</Link>	
-						
-							
-							{accountId ? <BookingList account={account} itemCount={4} /> : <></> }
-
-						
-							<Button 
-								color="primary"
-								className={classes.containedBtn}
-								variant="contained"
-								disableElevation
-								onClick={handleClick(`/account/${account?.id}/bookings`)}
-							>
-					View all
-					
-							</Button>
-						
-							
+						<Grid item xs={12} className={classes.contentLeft}>
+							<h2 className={classes.heading_2}>Users</h2>
+							{account && <EditAccountUsers accountToEdit={account} />}
 						</Grid>
 					</Grid>
-
-					
 				</Container>
 			</div>
 		</div>
 	)
 }
 
-export default connect(mapStateToProps)(ManageAccount)
+export default connect(mapStateToProps)(ManageAccountUsers)

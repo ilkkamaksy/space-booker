@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
-import { useQuery } from 'react-query'
 import {
 	Container,
 	Button,
@@ -15,14 +14,8 @@ import {
 	useHistory,
 } from 'react-router-dom'
 
-import { 
-	getAccounts,
-} from '../services/queries'
-
-import { setAccounts } from '../store/actions/accounts'
 
 import { AppState } from '../store/types'
-import { Account } from '../types'
 
 import BookingList from './BookingList'
 
@@ -125,11 +118,7 @@ interface RouteParams {
 
 type Props = ReturnType<typeof mapStateToProps>
 
-interface DispatchProps { 
-    setAccounts: (accounts:Account[]) => void
-}
-
-const ManageBookings = ({ accountdata, setAccounts }: Props & DispatchProps):React.ReactElement => {
+const ManageBookings = ({ accountdata }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
 	const history = useHistory()	
@@ -142,23 +131,6 @@ const ManageBookings = ({ accountdata, setAccounts }: Props & DispatchProps):Rea
 			history.push(path)
 		}
 	}
-
-	const queryAccounts = useQuery(['getAccounts', accountdata], getAccounts, { 
-		enabled: accountdata.accounts.length < 1,
-	})
-
-	useEffect(() => {
-		
-		if (
-			!account &&
-			queryAccounts.isSuccess && 
-            accountdata.accounts.length < 1 && 
-            queryAccounts.data.data
-		) {
-			setAccounts(queryAccounts.data.data)
-		}
-
-	}, [queryAccounts, accountdata, account])
 
 	return (
 		<div className={classes.root}>
@@ -231,6 +203,4 @@ const ManageBookings = ({ accountdata, setAccounts }: Props & DispatchProps):Rea
 	)
 }
 
-export default connect(mapStateToProps, {
-	setAccounts,
-})(ManageBookings)
+export default connect(mapStateToProps)(ManageBookings)
