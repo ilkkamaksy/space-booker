@@ -17,17 +17,23 @@ Registered users can view and manage bookings on the accounts they have access t
 
 Try out the [application running in Heroku](https://space-booker.herokuapp.com/).
 
+Here is a video to show a quick overview of the key features:
+
+https://user-images.githubusercontent.com/47775837/110219038-90ec6280-7ec5-11eb-811c-d397b4902d80.mp4
+
 Register your own user, or use the test user:
 
 **username**: testijamppa
 
 **password**: TosiSalainen#1
 
+For getting a feel for the sharing of organizations with other users, you can login with test users **tepi** and **jope** (the same password as above).
+
 After you have logged in, go to the dashboard to manage your organizations. If you registered your own user, create a new organization.
 
 Note: the idea behind organizations is that a user can create one or more organizations and then add available services/working spaces for each organization. With least one working space in an organization, a booking calendar for that organization will be available in the front end. 
 
-So, when you have at least one organization, you can add services/spaces available for people to book. On the dashboard page, click "edit services" below your organization and create a new service/space.
+So, when you have at least one organization, you can add services/spaces available for people to book. On the dashboard page, click "manage" below your organization and create a few services/spacse.
 
 When you create a service/space, fill out the required information:
 
@@ -39,7 +45,7 @@ When you create a service/space, fill out the required information:
 
 After saving, head back to the dashboard and click "view calendar" below your organization. You now will see your service in the organization calendar (the UI is a bit clumsy still at this point as there is no link to the calendar in the service management page). 
 
-Check out the [example calendar for our test user](https://space-booker.herokuapp.com/account/2/calendar) for reference of how the calendar looks like.
+Check out the [example calendar for our test user](https://space-booker.herokuapp.com/account/1/calendar) for reference of how the calendar looks like.
 
 The calendar view should be fairly intuitive to use: 
 
@@ -48,15 +54,15 @@ The calendar view should be fairly intuitive to use:
 - view information about a space/service by clicking on the info icon next to the title (here again the ui is still work in progress) 
 - to make a booking, simply click on a timeslot and give an email address. After booking, the slot will be reserved.
 
-That is what you can do in the app for now. The missing features are: 
+After you have bookings in your spaces, you can manage them in the admin pages. You can also share your calendar with other users, giving them either admin role or regular user role.
 
-- bookings can be managed in the backend
-- access to calendars can be restricted to selected users
-- images can be attached to services
-- more intuitive and easy to use UI
-- a confirmation email will be sent to users who have made bookings
-- when a booking occurs, a notification email will be sent to organization admins 
+New features to implement in the near future:
 
+- an admin user can set an organization private such that only selected users can access the booking calendar
+- an admin user can add images to services, which can be displayed in the front end
+- improve the UI to make it responsive and also more intuitive
+- a confirmation email is sent to users who have made bookings 
+- when a booking occurs, a notification email is sent to organization admins 
 
 
 ## Get started with development
