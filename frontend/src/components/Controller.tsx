@@ -67,7 +67,6 @@ const Controller = ({
 		onError: () => doneAction()
 	})
     
-	console.log(queryAccounts, accountdata.updatingAccounts)
 	useEffect(() => {
 		setToken(localStorage.getItem('access_token') ?? '')
 		if (queryMe.isSuccess) {

@@ -16,7 +16,10 @@ const stylesInUse = makeStyles(() =>
 			'& > * + *': {
 				marginTop: '5em',
 			},
-			background: 'rgba(255,255,255,0.9)'
+			background: 'rgba(255,255,255,0.9)',
+			position: 'fixed',
+			top: 0,
+			left: 0
 		},
 	})
 )

@@ -29,6 +29,7 @@ import {
 import { AppState } from '../../store/types'
 import { Account } from '../../types'
 
+import { isOwner } from '../../utils/helpers'
 
 const stylesInUse = makeStyles((theme) =>
 	createStyles({
@@ -155,6 +156,7 @@ const formStatusProps: FormStatusProps = {
 
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
+	me: state.userdata.user
 })
   
 type StateProps = ReturnType<typeof mapStateToProps>
@@ -172,9 +174,10 @@ interface Props {
 
 const EditAccount = ({ 
 	accountdata, 
+	accountToEdit, 
+	me,
 	addAccount, 
 	removeAccount,
-	accountToEdit, 
 	startAction, 
 	setSingleAccount 
 }: StateProps & DispatchProps & Props):React.ReactElement => {
@@ -405,20 +408,20 @@ const EditAccount = ({
 				}}
 			
 			</Formik>
-			{accountToEdit && 
-			<div className={classes.dangerZone}>
-				<h2>Danger Zone</h2>
-				<p>Be careful here, deleting the organization will wipe out all data related to it.</p>
-				<Button
-					color="primary"
-					variant="outlined"
-					className={classes.deleteBtn}
-					onClick={() => handleDelete(accountToEdit)}
-				>
-					{' '}
+			{accountToEdit && isOwner(me, accountToEdit) ?
+				<div className={classes.dangerZone}>
+					<h2>Danger Zone</h2>
+					<p>Be careful here, deleting the organization will wipe out all data related to it.</p>
+					<Button
+						color="primary"
+						variant="outlined"
+						className={classes.deleteBtn}
+						onClick={() => handleDelete(accountToEdit)}
+					>
+						{' '}
 						Delete organization
-				</Button>
-			</div>}
+					</Button>
+				</div> : <></>}
 
 		</div>
 	)
