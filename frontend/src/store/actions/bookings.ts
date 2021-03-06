@@ -31,9 +31,9 @@ export const setBookings = (bookings:Booking[]):BookingActionTypes =>  {
 	}
 }
 
-export const editBookings = (bookings:Booking[]):BookingActionTypes =>  {
+export const updateBookings = (bookings:Booking[]):BookingActionTypes =>  {
 	return {
-		type: '@prefix/EDIT_BOOKINGS',
+		type: '@prefix/UPDATE_BOOKINGS',
 		payload: bookings
 	}
 }

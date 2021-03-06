@@ -91,7 +91,7 @@ export interface SetBookingsAction {
 }
 
 export interface EditBookingsAction {
-    type: '@prefix/EDIT_BOOKINGS'
+    type: '@prefix/UPDATE_BOOKINGS'
     payload: Booking[]
 }
 

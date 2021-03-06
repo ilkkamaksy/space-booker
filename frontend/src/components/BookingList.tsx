@@ -15,7 +15,7 @@ import {
 	deleteBooking,
 } from '../services/queries'
 
-import { setBookings, removeBooking } from '../store/actions/bookings'
+import { updateBookings, removeBooking } from '../store/actions/bookings'
 
 import { AppState } from '../store/types'
 import { Booking, Account } from '../types'
@@ -109,7 +109,7 @@ type Props = {
 }
 
 interface DispatchProps { 
-	setBookings: (bookings: Booking[]) => void
+	updateBookings: (bookings: Booking[]) => void
 	removeBooking: (booking: Booking) => void
 }
 
@@ -117,7 +117,7 @@ const Services = ({
 	account, 
 	bookingData,
 	itemCount,
-	setBookings,
+	updateBookings,
 	removeBooking 
 }: Props & StateProps & DispatchProps):React.ReactElement => {
 
@@ -142,7 +142,7 @@ const Services = ({
 			queryAccountBookings.isSuccess && 
             queryAccountBookings.data.data
 		) {
-			setBookings(queryAccountBookings.data.data)
+			updateBookings(queryAccountBookings.data.data)
 		}
 
 		if (
@@ -210,6 +210,6 @@ const Services = ({
 }
 
 export default connect(mapStateToProps, {
-	setBookings,
+	updateBookings,
 	removeBooking
 })(Services)

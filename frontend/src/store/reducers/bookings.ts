@@ -44,7 +44,7 @@ const bookingReducer = (state = initialState, action: BookingActionTypes):Bookin
 			bookings: mergeBookings(state.bookings, action.payload),
 			updatingBookings: false
 		}
-	case '@prefix/EDIT_BOOKINGS':
+	case '@prefix/UPDATE_BOOKINGS':
 		return {
 			...state,
 			bookings: action.payload,
