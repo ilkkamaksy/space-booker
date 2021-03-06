@@ -67,7 +67,7 @@ const Controller = ({
 		onError: () => doneAction()
 	})
     
-	console.log(queryAccounts)
+	console.log(queryAccounts, accountdata.updatingAccounts)
 	useEffect(() => {
 		setToken(localStorage.getItem('access_token') ?? '')
 		if (queryMe.isSuccess) {
@@ -86,10 +86,6 @@ const Controller = ({
 
 	if (loggedOut) {
 		window.location.href = '/'
-	}
-
-	if (accountdata.updatingAccounts && !!user) {
-		return <Loader /> 
 	}
 
 	return (
@@ -115,6 +111,7 @@ const Controller = ({
 			<Route exact path="/register" component={Register} />
 			<Route exact path="/login" component={Login} />
 			
+			{accountdata.updatingAccounts && !!user && <Loader />}
 		</div>
 	)
 }

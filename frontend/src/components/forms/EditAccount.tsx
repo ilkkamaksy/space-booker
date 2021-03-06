@@ -23,7 +23,7 @@ import {
 	addAccount, 
 	removeAccount,
 	startAction, 
-	setSingleAccount 
+	setSingleAccount,
 } from '../../store/actions/accounts'
 
 import { AppState } from '../../store/types'
@@ -215,7 +215,7 @@ const EditAccount = ({
 			setFormStatus(formStatusProps.success)
 			setShowFormStatus(true)
 			startAction()
-		}
+		},
 	})
 
 	const saveAccountData = async (accountData: AccountFormFields) => {

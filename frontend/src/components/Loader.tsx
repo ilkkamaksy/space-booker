@@ -10,11 +10,13 @@ const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
 			width: '100%',
-			padding: '6em 0',
+			height: '100vh',
+			alignItems: 'center',
 			textAlign: 'center',
 			'& > * + *': {
 				marginTop: '5em',
 			},
+			background: 'rgba(255,255,255,0.9)'
 		},
 	})
 )
