@@ -75,12 +75,13 @@ interface RouteParams {
   
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
-	me: state.userdata.user
+	me: state.userdata.user,
+	updateUser: state.userdata.updateUser
 })
   
 type Props = ReturnType<typeof mapStateToProps>
 
-const EditAccount = ({ accountdata, me }: Props):React.ReactElement => {
+const EditAccount = ({ accountdata, me, updateUser }: Props):React.ReactElement => {
 
 	const { id } = useParams<RouteParams>()
 
@@ -89,7 +90,10 @@ const EditAccount = ({ accountdata, me }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
 
-	if (!me || accountToEdit && !(isAdmin(me, accountToEdit) || isOwner(me, accountToEdit))) {
+	if (
+		!updateUser && !me && 
+		!(isAdmin(me, accountToEdit) || isOwner(me, accountToEdit))
+	) {
 		return <NotAllowed />
 	}
 

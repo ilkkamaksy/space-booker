@@ -4,6 +4,7 @@ export interface UserState {
     user: UserType|undefined
     token: string|undefined
     loggedOut: boolean
+    updateUser: boolean
 }
 
 export const SET_TOKEN = 'SET_TOKEN'

@@ -111,6 +111,7 @@ const Controller = ({
 			<Route exact path="/login" component={Login} />
 			
 			{accountdata.updatingAccounts && !!user && <Loader />}
+			
 		</div>
 	)
 }

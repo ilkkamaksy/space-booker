@@ -18,8 +18,8 @@ import {
 
 import { AppState } from '../store/types'
 
-import ServiceList from './ServiceList'
-import BookingList from './BookingList'
+import ServiceList from '../components/ServiceList'
+import BookingList from '../components/BookingList'
 import NotAllowed from '../components/NotAllowed'
 
 import { isAdmin, isOwner } from '../utils/helpers'

@@ -10,16 +10,20 @@ const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
 			width: '100%',
-			height: '100vh',
+			height: 'calc(100vh - 66px)',
 			alignItems: 'center',
-			textAlign: 'center',
+			justifyItems: 'center',
+			justifyContent: 'center',
 			'& > * + *': {
 				marginTop: '5em',
 			},
-			background: 'rgba(255,255,255,0.9)',
-			position: 'fixed',
-			top: 0,
-			left: 0
+			background: '#fff',
+			borderTop: '1px solid #eee',
+			position: 'absolute',
+			top: '64px',
+			left: 0,
+			display: 'flex',
+			zIndex: 10
 		},
 	})
 )

@@ -14,10 +14,12 @@ import {
 	useHistory,
 } from 'react-router-dom'
 
+import { isOwner, isAdmin } from '../utils/helpers'
 
 import { AppState } from '../store/types'
 
-import BookingList from './BookingList'
+import BookingList from '../components/BookingList'
+import NotAllowed from '../components/NotAllowed'
 
 const stylesInUse = makeStyles(() =>
 	createStyles({
@@ -110,6 +112,8 @@ const stylesInUse = makeStyles(() =>
 
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
+	me: state.userdata.user,
+	updateUser: state.userdata.updateUser
 })
   
 interface RouteParams {
@@ -118,13 +122,20 @@ interface RouteParams {
 
 type Props = ReturnType<typeof mapStateToProps>
 
-const ManageBookings = ({ accountdata }: Props):React.ReactElement => {
+const ManageBookings = ({ accountdata, me, updateUser }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
 	const history = useHistory()	
 
 	const { accountId } = useParams<RouteParams>()
 	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
+
+	if (
+		!updateUser && !me && 
+		!(isAdmin(me, account) || isOwner(me, account))
+	) {
+		return <NotAllowed />
+	}
 
 	const handleClick = (path: string) => {
 		return () => {

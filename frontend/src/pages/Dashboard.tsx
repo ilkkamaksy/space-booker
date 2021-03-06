@@ -97,16 +97,17 @@ const stylesInUse = makeStyles(() =>
 
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
-	me: state.userdata.user
+	me: state.userdata.user,
+	updateUser: state.userdata.updateUser
 })
   
 type Props = ReturnType<typeof mapStateToProps>
 
-const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
+const Dashboard = ({ accountdata, me, updateUser }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
 
-	if (!me) {
+	if (!me && !updateUser) {
 		return <NotAllowed />
 	}
 

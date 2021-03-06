@@ -77,12 +77,13 @@ interface RouteParams {
   
 const mapStateToProps = (state: AppState) => ({
 	accountdata: state.accountdata,
-	me: state.userdata.user
+	me: state.userdata.user,
+	updateUser: state.userdata.updateUser
 })
   
 type Props = ReturnType<typeof mapStateToProps>
 
-const EditService = ({ accountdata, me }: Props):React.ReactElement => {
+const EditService = ({ accountdata, me, updateUser }: Props):React.ReactElement => {
 
 	const { accountId, serviceId } = useParams<RouteParams>()
 
@@ -93,7 +94,10 @@ const EditService = ({ accountdata, me }: Props):React.ReactElement => {
 	const account = accountId ? accountdata.accounts.find(acc => acc.id === parseInt(accountId)) : undefined
 	const serviceToEdit = serviceId ? account?.services.find(service => service.id === parseInt(serviceId)) : undefined
 
-	if (!account || !me || !(isAdmin(me, account) || isOwner(me, account))) {
+	if (
+		!updateUser && !me && 
+		account && !(isAdmin(me, account) || isOwner(me, account))
+	) {
 		return <NotAllowed />
 	}
 
