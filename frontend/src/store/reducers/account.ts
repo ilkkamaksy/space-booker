@@ -6,44 +6,44 @@ import { Account } from '../../types'
 
 const initialState = {
 	accounts: [],
-	updating: true,
+	updatingAccounts: true,
 }
 
 const accountReducer = (state = initialState, action: AccountActionTypes):AccountState => {
 	switch (action.type) {
-	case '@prefix/START_ACTION':
+	case '@prefix/START_ACCOUNT_ACTION':
 		return {
 			...state,
-			updating: true
+			updatingAccounts: true
 		}
-	case '@prefix/DONE_ACTION':
+	case '@prefix/DONE_ACCOUNT_ACTION':
 		return {
 			...state,
-			updating: false
+			updatingAccounts: false
 		}
 	case '@prefix/ADD_ACCOUNT':
 		return {
 			...state,
 			accounts: [action.payload, ...state.accounts],
-			updating: false
+			updatingAccounts: false
 		}
 	case '@prefix/REMOVE_ACCOUNT':
 		return {
 			...state,
 			accounts: state.accounts.filter((account:Account) => account.id !== action.payload.id),
-			updating: false
+			updatingAccounts: false
 		}
 	case '@prefix/SET_ACCOUNTS':
 		return {
 			...state,
 			accounts: action.payload,
-			updating: false
+			updatingAccounts: false
 		}
 	case '@prefix/SET_SINGLE_ACCOUNT':
 		return {
 			...state,
 			accounts: state.accounts.map((acc:Account) => acc.id === action.payload.id ? action.payload : acc),
-			updating: false
+			updatingAccounts: false
 		}
 	default: 
 		return state

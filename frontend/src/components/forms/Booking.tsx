@@ -127,7 +127,7 @@ const formStatusProps: FormStatusProps = {
 }
 
 const mapStateToProps = (state: AppState) => ({
-	updating: state.bookingData.updating,
+	updatingBookings: state.bookingData.updatingBookings,
 })
   
 type StateProps = ReturnType<typeof mapStateToProps>
@@ -146,7 +146,7 @@ interface DispatchProps {
 const BookingForm = ({ 
 	selectedSlot, 
 	handleCloseBookingForm,
-	updating,
+	updatingBookings,
 	startAction,
 	addBooking
 }: StateProps & DispatchProps & Props):React.ReactElement => {
@@ -204,13 +204,13 @@ const BookingForm = ({
 			saveMutation.isSuccess &&
 			!saveMutation.isLoading && 
 			booking && 
-			updating
+			updatingBookings
 		) {
 			addBooking(booking)
 			handleCloseBookingForm()
 		}
 
-	}, [saveMutation, updating])
+	}, [saveMutation, updatingBookings])
     
 	return (
 		<Formik

@@ -245,7 +245,7 @@ const EditAccount = ({
 			saveMutation.isSuccess &&
 			!saveMutation.isLoading && 
 			newAccount && 
-			accountdata.updating
+			accountdata.updatingAccounts
 		) {
 			addAccount(newAccount)
 			history.goBack()
@@ -256,7 +256,7 @@ const EditAccount = ({
 			updateMutation.isSuccess &&
 			!updateMutation.isLoading &&
 			updatedAccount &&
-			accountdata.updating
+			accountdata.updatingAccounts
 		) {
 			setSingleAccount(updatedAccount)
 			history.goBack()

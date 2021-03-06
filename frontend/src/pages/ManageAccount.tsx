@@ -156,6 +156,7 @@ const ManageAccount = ({ accountdata, me }: Props):React.ReactElement => {
 				</Container>
 			</div>
 
+			
 			<div className={classes.banner}>
 				<Container maxWidth="xl">
 					<Grid container direction="row">
@@ -272,6 +273,7 @@ const ManageAccount = ({ accountdata, me }: Props):React.ReactElement => {
 
 					
 				</Container>
+			
 			</div>
 		</div>
 	)

@@ -302,7 +302,7 @@ const EditService = ({
 			!saveMutation.isLoading && 
 			newService && 
 			account &&
-			accountdata.updating
+			accountdata.updatingAccounts
 		) {
 			const updatedAccount = {
 				...account,
@@ -319,7 +319,7 @@ const EditService = ({
 			!updateMutation.isLoading &&
 			updatedService &&
 			account &&
-			accountdata.updating
+			accountdata.updatingAccounts
 		) {
 			const updatedAccount = {
 				...account,

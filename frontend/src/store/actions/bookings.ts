@@ -6,7 +6,7 @@ import '../reducers/bookings'
 
 export function startAction():BookingActionTypes {
 	return {
-		type: '@prefix/START_ACTION'
+		type: '@prefix/START_BOOKING_ACTION'
 	}
 }
 

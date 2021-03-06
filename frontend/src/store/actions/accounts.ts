@@ -1,4 +1,4 @@
-import { Account, UserAccountRole } from '../../types'
+import { Account } from '../../types'
 import { 
 	AccountActionTypes,
 } from '../types'
@@ -6,13 +6,13 @@ import '../reducers/account'
 
 export function startAction():AccountActionTypes {
 	return {
-		type: '@prefix/START_ACTION'
+		type: '@prefix/START_ACCOUNT_ACTION'
 	}
 }
 
 export function doneAction():AccountActionTypes {
 	return {
-		type: '@prefix/DONE_ACTION'
+		type: '@prefix/DONE_ACCOUNT_ACTION'
 	}
 }
 

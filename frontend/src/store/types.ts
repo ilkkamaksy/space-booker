@@ -1,4 +1,4 @@
-import { UserType, Account, UserAccountRole, Booking } from '../types'
+import { UserType, Account, Booking } from '../types'
 
 export interface UserState {
     user: UserType|undefined
@@ -33,7 +33,7 @@ export type UserActionTypes = SetTokenAction | SetUserAction | LogoutUserAction
 
 export interface AccountState {
     accounts: Account[]
-    updating: boolean
+    updatingAccounts: boolean
 }
 
 export interface AddAccountAction {
@@ -56,15 +56,23 @@ export interface SetSingleAccountAction {
     payload: Account
 }
 
-export interface InitAction {
-    type: '@prefix/START_ACTION'
+export interface InitAccountAction {
+    type: '@prefix/START_ACCOUNT_ACTION'
 }
 
-export interface DoneAction {
-    type: '@prefix/DONE_ACTION'
+export interface DoneAccountAction {
+    type: '@prefix/DONE_ACCOUNT_ACTION'
 }
 
-export type AccountActionTypes = AddAccountAction | RemoveAccountAction | SetAccountsAction | SetSingleAccountAction | InitAction | DoneAction
+export type AccountActionTypes = AddAccountAction | RemoveAccountAction | SetAccountsAction | SetSingleAccountAction | InitAccountAction | DoneAccountAction
+
+export interface InitBookingAction {
+    type: '@prefix/START_BOOKING_ACTION'
+}
+
+export interface DoneBookingAction {
+    type: '@prefix/DONE_BOOKING_ACTION'
+}
 
 export interface AddBookingAction {
     type: '@prefix/ADD_BOOKING'
@@ -99,11 +107,11 @@ export interface SetFormVisibilityAction {
     type: '@prefix/SET_FORM_VISIBILITY'
 }
 
-export type BookingActionTypes = InitAction | AddBookingAction | RemoveBookingAction | SetBookingsAction | EditBookingsAction | ResetBookingsAction | SetDateAction | SetFormVisibilityAction
+export type BookingActionTypes = InitBookingAction | AddBookingAction | RemoveBookingAction | SetBookingsAction | EditBookingsAction | ResetBookingsAction | SetDateAction | SetFormVisibilityAction
 
 export interface BookingState {
     bookings: Booking[]
-    updating: boolean
+    updatingBookings: boolean
     selectedDate: Date,
     bookingFormVisible: boolean
 }

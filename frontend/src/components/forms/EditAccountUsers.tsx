@@ -223,7 +223,7 @@ const EditAccountUsers = ({
 			updateMutation.isSuccess &&
 			!updateMutation.isLoading &&
 			updatedAccount &&
-			accountdata.updating
+			accountdata.updatingAccounts
 		) {
 			setSingleAccount(updatedAccount)
 		}		

@@ -7,7 +7,7 @@ import { Booking } from '../../types'
 
 const initialState = {
 	bookings: [],
-	updating: false,
+	updatingBookings: false,
 	selectedDate: new Date(),
 	bookingFormVisible: false
 }
@@ -21,40 +21,40 @@ const mergeBookings = (oldBookings:Booking[], newBookings:Booking[]):Booking[] =
 
 const bookingReducer = (state = initialState, action: BookingActionTypes):BookingState => {
 	switch (action.type) {
-	case '@prefix/START_ACTION':
+	case '@prefix/START_BOOKING_ACTION':
 		return {
 			...state,
-			updating: true
+			updatingBookings: true
 		}
 	case '@prefix/ADD_BOOKING':
 		return {
 			...state,
 			bookings: [action.payload, ...state.bookings],
-			updating: false
+			updatingBookings: false
 		}
 	case '@prefix/REMOVE_BOOKING':
 		return {
 			...state,
 			bookings: state.bookings.filter((booking:Booking) => booking.id !== action.payload.id),
-			updating: false
+			updatingBookings: false
 		}
 	case '@prefix/SET_BOOKINGS':
 		return {
 			...state,
 			bookings: mergeBookings(state.bookings, action.payload),
-			updating: false
+			updatingBookings: false
 		}
 	case '@prefix/EDIT_BOOKINGS':
 		return {
 			...state,
 			bookings: action.payload,
-			updating: false
+			updatingBookings: false
 		}
 	case '@prefix/RESET_BOOKINGS':
 		return {
 			...state,
 			bookings: initialState.bookings,
-			updating: false
+			updatingBookings: false
 		}
 	case '@prefix/SET_SELECTED_DATE':
 		return {

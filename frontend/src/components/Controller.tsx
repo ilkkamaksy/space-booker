@@ -5,11 +5,10 @@ import { useQuery } from 'react-query'
 
 import { AppState } from '../store/types'
 import { setToken, setUser, logoutUser } from '../store/actions/user'
-import { startAction, doneAction } from '../store/actions/accounts'
 
 import { me, getAccounts } from '../services/queries'
 
-import { setAccounts } from '../store/actions/accounts'
+import { setAccounts, doneAction } from '../store/actions/accounts'
 
 import Header from './Header'
 import Home from '../pages/Home'
@@ -22,6 +21,7 @@ import ManageAccount from '../pages/ManageAccount'
 import ManageBookings from '../pages/ManageBookings'
 import EditService from '../pages/EditService'
 import Calendar from './Calendar'
+import Loader from './Loader'
 
 import { Account, UserType } from '../types'
     
@@ -39,6 +39,7 @@ interface DispatchProps {
     setUser: (user:UserType|undefined) => void
 	logoutUser: () => void 
 	setAccounts: (accounts:Account[]) => void
+	doneAction: () => void
 }
 
 const Controller = ({ 
@@ -49,7 +50,8 @@ const Controller = ({
 	setToken, 
 	setUser, 
 	logoutUser,
-	setAccounts 
+	setAccounts,
+	doneAction
 }: Props & DispatchProps):React.ReactElement => {
     
 	const queryMe = useQuery(['me', token], () => me(token), { 
@@ -62,8 +64,10 @@ const Controller = ({
 
 	const queryAccounts = useQuery(['getAccounts', accountdata], getAccounts, { 
 		enabled: accountdata.accounts.length === 0 && !!user,
+		onError: () => doneAction()
 	})
     
+	console.log(queryAccounts)
 	useEffect(() => {
 		setToken(localStorage.getItem('access_token') ?? '')
 		if (queryMe.isSuccess) {
@@ -82,6 +86,10 @@ const Controller = ({
 
 	if (loggedOut) {
 		window.location.href = '/'
+	}
+
+	if (accountdata.updatingAccounts && !!user) {
+		return <Loader /> 
 	}
 
 	return (
@@ -115,5 +123,6 @@ export default connect(mapStateToProps, {
 	setToken,
 	setUser,
 	logoutUser,
-	setAccounts
+	setAccounts,
+	doneAction
 })(Controller)

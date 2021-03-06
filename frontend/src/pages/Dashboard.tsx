@@ -19,7 +19,6 @@ import { isAdmin, isOwner } from '../utils/helpers'
 
 import NotAllowed from '../components/NotAllowed'
 
-
 const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
@@ -107,7 +106,7 @@ const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
 
 	const classes = stylesInUse()
 
-	if (!me && !accountdata.updating) {
+	if (!me) {
 		return <NotAllowed />
 	}
 
@@ -130,10 +129,9 @@ const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
 					</p>
 				</Container>
 			</div>
-
-			
 			
 			<div className={classes.content}>
+				
 				<Container maxWidth="xl">
 					<h2 className={classes.heading_2}>Your organizations</h2>
 				
@@ -204,7 +202,9 @@ const Dashboard = ({ accountdata, me }: Props):React.ReactElement => {
 						Add new organization
 						
 					</Button>
+					
 				</Container>
+				
 			</div>
 		</div>
 	)

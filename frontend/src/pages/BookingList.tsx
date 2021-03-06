@@ -20,6 +20,8 @@ import { setBookings, removeBooking } from '../store/actions/bookings'
 import { AppState } from '../store/types'
 import { Booking, Account } from '../types'
 
+import Loader from '../components/Loader'
+
 const stylesInUse = makeStyles(() =>
 	createStyles({
 		root: {
@@ -151,6 +153,10 @@ const Services = ({
 		}
 
 	}, [queryAccountBookings, deleteMutation])
+
+	if (queryAccountBookings.isFetching || queryAccountBookings.isLoading) {
+		return <Loader />
+	}
 
 	const accountBookings = itemCount > 0 
 		? bookingData.bookings.filter(item => item.service?.account_id === account.id).slice(0, itemCount)
