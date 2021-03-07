@@ -23,17 +23,36 @@ import { login } from '../../services/queries'
 const stylesInUse = makeStyles((theme) =>
 	createStyles({
 		root: {
-			maxWidth: '500px',
-			display: 'block',
+			width: '100%',
 			margin: '0 auto',
+			backgroundColor: '#f1f1f1',
+			height: 'calc(100vh - 64px)',
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'center'
+		},
+		form: {
+			backgroundColor: '#fff',
+			padding: '2em 3em 3em',
+			borderRadius: '8px',
+			maxWidth: '400px'
 		},
 		textField: {
 			'& > *': {
 				width: '100%',
 			},
 		},
+		inputField: {
+			margin: '5px 0 20px',
+		},
 		loginButton: {
-			marginTop: '30px',
+			marginTop: '10px',
+			backgroundColor: '#6A0572',
+			padding: '12px 20px',
+			fontWeight: 'bold',
+			color: '#ffffff',
+			margin: '0 0.5em 0 0',
+			width: 'auto',
 		},
 		title: { textAlign: 'left' },
 		successMessage: { color: theme.palette.success.main },
@@ -140,17 +159,20 @@ const Login = ({ user, setToken, setAccounts }: Props & DispatchProps):React.Rea
 					} = props
 
 					return (
-						<Form>
+						<Form className={classes.form}>
 							<Grid container direction="row">
 								<Grid item className={classes.title} xs={12}>
 									<h1>Login</h1>
 								</Grid>
-								<Grid item className={classes.textField} xs={8}>
+								<Grid item xs={12}>
 									<TextField
 										id="username"
 										name="username"
 										type="text"
 										label="Username"
+										variant="outlined"
+										fullWidth
+										className={classes.inputField}
 										value={values.username}
 										onChange={handleChange}
 										onBlur={handleBlur}
@@ -163,12 +185,15 @@ const Login = ({ user, setToken, setAccounts }: Props & DispatchProps):React.Rea
 									/>
 								</Grid>
 
-								<Grid item className={classes.textField} xs={8}>
+								<Grid item xs={12}>
 									<TextField
 										id="password"
 										name="password"
 										type="password"
 										label="Password"
+										variant="outlined"
+										fullWidth
+										className={classes.inputField}
 										value={values.password}
 										onChange={handleChange}
 										onBlur={handleBlur}
@@ -181,12 +206,13 @@ const Login = ({ user, setToken, setAccounts }: Props & DispatchProps):React.Rea
 									/>
 								</Grid>
 
-								<Grid item className={classes.loginButton} xs={6}>
+								<Grid item xs={6}>
 									<Button
 										color="primary"
 										type="submit"
 										variant="contained"
 										disabled={isSubmitting}
+										className={classes.loginButton}
 									>
 										{' '}
                                         Log in
