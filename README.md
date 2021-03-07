@@ -19,7 +19,7 @@ Try out the [application running in Heroku](https://space-booker.herokuapp.com/)
 
 ## Quick User Instructions
 
-Here is a video to show a quick overview of the key features:
+Here is a video to show a quick overview of the key features (on youtube):
 
 [![Space Booker Demo](http://img.youtube.com/vi/hsrU3TEkWPI/0.jpg)](http://www.youtube.com/watch?v=hsrU3TEkWPI "Space Booker Demo")
 
@@ -49,7 +49,7 @@ When you create a service/space, fill out the required information:
 
 Check out the [example calendar for our test user](https://space-booker.herokuapp.com/account/1/calendar) for reference of how the calendar looks like.
 
-Here's a quick video demonstration of booking calendar:
+Here's a quick video demonstration of booking calendar (on youtube):
 
 [![Space Booker Calendar Demo](http://img.youtube.com/vi/Jfi0Utm0VJ0/0.jpg)](http://www.youtube.com/watch?v=Jfi0Utm0VJ0 "Space Booker Calendar Demo")
 
@@ -61,6 +61,13 @@ The calendar view should be fairly intuitive to use:
 - to make a booking, simply click on a timeslot and give an email address. After saving, the slot will be reserved.
 
 **5. After you have bookings in your spaces, you can manage them in the admin pages. You can also share your calendar with other users, giving them either admin role or regular user role.**
+
+### Issues and future considerations
+
+Issues:
+
+- adding new users to organization feature does not contain sufficient error handling at the moment. For example, adding an invalid username will not show a useful error message.
+- The JWT token expires after a few minutes and when it does, the user is automatically logged out. Refresh token functionality have to be implemented.
 
 New features to implement in the near future:
 
