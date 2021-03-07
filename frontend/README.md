@@ -1,46 +1,122 @@
-# Getting Started with Create React App
+# Spaces Booking App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This app is for booking working spaces such as meeting rooms or work stations. Registered users can add working spaces to a booking calendar with 
 
-## Available Scripts
+- descriptions and images, 
+- available hours - e.g. from 9:00-17:00,  
+- time slots - anything from 15 minutes to a full working day,
+- maximum bookings per time slot. 
 
-In the project directory, you can run:
+Registered users can invite others to manage and edit their spaces, making collaboration easy. 
 
-### `yarn start`
+Booking calendars can be public, so anyone with a link to a booking calendar can make reservations, or access can be limited to a selected group of registered users. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Registered users can view and manage bookings on the accounts they have access to.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## App in production
 
-### `yarn test`
+Try out the [application running in Heroku](https://space-booker.herokuapp.com/).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Quick User Instructions
 
-### `yarn build`
+Here is a video to show a quick overview of the key features (on youtube):
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+[![Space Booker Demo](http://img.youtube.com/vi/hsrU3TEkWPI/0.jpg)](http://www.youtube.com/watch?v=hsrU3TEkWPI "Space Booker Demo")
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**1. Register your own user, or use the test user:**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**username**: testijamppa
 
-### `yarn eject`
+**password**: TosiSalainen#1
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+For getting a feel for the sharing of organizations with other users, you can login with test users **tepi** and **jope** (the same password as above).
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**2. After you have logged in, go to the dashboard to create and manage organizations.**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+*Note: the idea behind organizations is that a user can create one or more organizations and then add available services/working spaces for each organization. With least one working space in an organization, a booking calendar for that organization will be available in the front end.*
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+**3. When you have at least one organization, you can add services/spaces available for people to book. On the dashboard page, click "manage" below your organization and create a few services/spacse.**
 
-## Learn More
+When you create a service/space, fill out the required information:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- name, 
+- description, 
+- opening hours (default 09:00 - 17:00), 
+- timeslot (i.e. 30min, 60min, etc. Defaults to 30 mins) and 
+- max bookings per timeslot (defaults to 1). 
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**4. After saving, go check out your booking calendar.**
+
+Check out the [example calendar for our test user](https://space-booker.herokuapp.com/account/1/calendar) for reference of how the calendar looks like.
+
+Here's a quick video demonstration of booking calendar (on youtube):
+
+[![Space Booker Calendar Demo](http://img.youtube.com/vi/Jfi0Utm0VJ0/0.jpg)](http://www.youtube.com/watch?v=Jfi0Utm0VJ0 "Space Booker Calendar Demo")
+
+The calendar view should be fairly intuitive to use: 
+
+- change the date from the **date** select 
+- time slots in the past are not available 
+- view information about a space/service by clicking on the info icon next to the title
+- to make a booking, simply click on a timeslot and give an email address. After saving, the slot will be reserved.
+
+**5. After you have bookings in your spaces, you can manage them in the admin pages. You can also share your calendar with other users, giving them either admin role or regular user role.**
+
+### Issues and future considerations
+
+Issues:
+
+- adding new users to organization feature does not contain sufficient error handling at the moment. For example, adding an invalid username will not show a useful error message.
+- The JWT token expires after a few minutes and when it does, the user is automatically logged out. Refresh token functionality have to be implemented.
+
+New features to implement in the near future:
+
+- an admin user can set an organization private such that only selected users can access the booking calendar
+- an admin user can add images to services, which can be displayed in the front end
+- improve the UI to make it responsive and also more intuitive
+- a confirmation email is sent to users who have made bookings 
+- when a booking occurs, a notification email is sent to organization admins 
+
+
+## Get started with development
+
+This app has a Python Flask application serving a REST API in the backend and a React app consuming the API in the front end. You can get started with development or test the app on your local machine with the following instructions.
+
+### Install and run backend
+
+1. First, go to `/backend` folder and create an `.env` file and add the following variables:
+
+```
+DATABASE_URL=postgresql:///your-db 
+DATABASE_URL_TEST=postgresql:///your-test-db
+JWT_SECRET=your-secret
+HASH=your-random-string
+```
+
+2. Next, start up the development environment with (make sure you are in `/backend` folder)
+
+```$ python3 -m venv venv```
+
+followed with
+
+```$ source venv/bin/activate```
+
+3. Install dependencies (skip this step if already installed):
+
+```(venv) $ pip install -r requirements.txt```
+
+4. Run backend with
+
+```(venv) $ python run.py```
+
+### Install and run frontend
+
+1. Go to `/frontend` folder and install (skip if already installed) 
+
+`yarn`
+
+2. Run frontend in development mode with
+
+`yarn start`
+
+The app will be accessible in `localhost:3000`.
