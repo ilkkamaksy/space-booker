@@ -17,17 +17,25 @@ Registered users can view and manage bookings on the accounts they have access t
 
 Try out the [application running in Heroku](https://space-booker.herokuapp.com/).
 
-Register your own user, or use the test user:
+## Quick User Instructions
+
+Here is a video to show a quick overview of the key features (on youtube):
+
+[![Space Booker Demo](http://img.youtube.com/vi/hsrU3TEkWPI/0.jpg)](http://www.youtube.com/watch?v=hsrU3TEkWPI "Space Booker Demo")
+
+**1. Register your own user, or use the test user:**
 
 **username**: testijamppa
 
 **password**: TosiSalainen#1
 
-After you have logged in, go to the dashboard to manage your organizations. If you registered your own user, create a new organization.
+For getting a feel for the sharing of organizations with other users, you can login with test users **tepi** and **jope** (the same password as above).
 
-Note: the idea behind organizations is that a user can create one or more organizations and then add available services/working spaces for each organization. With least one working space in an organization, a booking calendar for that organization will be available in the front end. 
+**2. After you have logged in, go to the dashboard to create and manage organizations.**
 
-So, when you have at least one organization, you can add services/spaces available for people to book. On the dashboard page, click "edit services" below your organization and create a new service/space.
+*Note: the idea behind organizations is that a user can create one or more organizations and then add available services/working spaces for each organization. With least one working space in an organization, a booking calendar for that organization will be available in the front end.*
+
+**3. When you have at least one organization, you can add services/spaces available for people to book. On the dashboard page, click "manage" below your organization and create a few services/spacse.**
 
 When you create a service/space, fill out the required information:
 
@@ -37,26 +45,37 @@ When you create a service/space, fill out the required information:
 - timeslot (i.e. 30min, 60min, etc. Defaults to 30 mins) and 
 - max bookings per timeslot (defaults to 1). 
 
-After saving, head back to the dashboard and click "view calendar" below your organization. You now will see your service in the organization calendar (the UI is a bit clumsy still at this point as there is no link to the calendar in the service management page). 
+**4. After saving, go check out your booking calendar.**
 
-Check out the [example calendar for our test user](https://space-booker.herokuapp.com/account/2/calendar) for reference of how the calendar looks like.
+Check out the [example calendar for our test user](https://space-booker.herokuapp.com/account/1/calendar) for reference of how the calendar looks like.
+
+Here's a quick video demonstration of booking calendar (on youtube):
+
+[![Space Booker Calendar Demo](http://img.youtube.com/vi/Jfi0Utm0VJ0/0.jpg)](http://www.youtube.com/watch?v=Jfi0Utm0VJ0 "Space Booker Calendar Demo")
 
 The calendar view should be fairly intuitive to use: 
 
-- change the date from the "date" select 
+- change the date from the **date** select 
 - time slots in the past are not available 
-- view information about a space/service by clicking on the info icon next to the title (here again the ui is still work in progress) 
-- to make a booking, simply click on a timeslot and give an email address. After booking, the slot will be reserved.
+- view information about a space/service by clicking on the info icon next to the title
+- to make a booking, simply click on a timeslot and give an email address. After saving, the slot will be reserved.
 
-That is what you can do in the app for now. The missing features are: 
+**5. After you have bookings in your spaces, you can manage them in the admin pages. You can also share your calendar with other users, giving them either admin role or regular user role.**
 
-- bookings can be managed in the backend
-- access to calendars can be restricted to selected users
-- images can be attached to services
-- more intuitive and easy to use UI
-- a confirmation email will be sent to users who have made bookings
-- when a booking occurs, a notification email will be sent to organization admins 
+### Issues and future considerations
 
+Issues:
+
+- adding new users to organization feature does not contain sufficient error handling at the moment. For example, adding an invalid username will not show a useful error message.
+- The JWT token expires after a few minutes and when it does, the user is automatically logged out. Refresh token functionality have to be implemented.
+
+New features to implement in the near future:
+
+- an admin user can set an organization private such that only selected users can access the booking calendar
+- an admin user can add images to services, which can be displayed in the front end
+- improve the UI to make it responsive and also more intuitive
+- a confirmation email is sent to users who have made bookings 
+- when a booking occurs, a notification email is sent to organization admins 
 
 
 ## Get started with development
