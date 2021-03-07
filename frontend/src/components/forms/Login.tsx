@@ -13,8 +13,10 @@ import {
 } from '@material-ui/core'
 
 import { AppState } from '../../store/types'
+import { Account } from '../../types'
 
 import { setToken, setUser } from '../../store/actions/user'
+import { setAccounts } from '../../store/actions/accounts'
 
 import { login } from '../../services/queries'
 
@@ -67,10 +69,11 @@ const mapStateToProps = (state: AppState) => ({
 type Props = ReturnType<typeof mapStateToProps>;
 
 interface DispatchProps { 
-    setToken: (token:string) => void, 
+    setToken: (token:string) => void
+	setAccounts: (accounts: Account[]) => void
 }
 
-const Login = ({ user, setToken }: Props & DispatchProps):React.ReactElement => {
+const Login = ({ user, setToken, setAccounts }: Props & DispatchProps):React.ReactElement => {
 	const [formStatus, setFormStatus] = useState<FormStatus>({
 		message: '',
 		type: '',
@@ -83,7 +86,8 @@ const Login = ({ user, setToken }: Props & DispatchProps):React.ReactElement => 
 		onError: () => {
 			setFormStatus(formStatusProps.error)
 			setShowFormStatus(true)
-		}
+		},
+		onSuccess: () => setAccounts([])
 	})
 
 	const logInUser = async (userData: LoginFormFields) => {
@@ -206,5 +210,6 @@ const Login = ({ user, setToken }: Props & DispatchProps):React.ReactElement => 
 
 export default connect(mapStateToProps, {
 	setToken,
-	setUser
+	setUser,
+	setAccounts
 })(Login)
