@@ -19,7 +19,7 @@ Try out the [application running in Heroku](https://space-booker.herokuapp.com/)
 
 ## Quick User Instructions
 
-Here is a video to show a quick overview of the key features (on youtube):
+Here is a video to show a quick overview of the key features (on youtube click on the preview image):
 
 [![Space Booker Demo](http://img.youtube.com/vi/hsrU3TEkWPI/0.jpg)](http://www.youtube.com/watch?v=hsrU3TEkWPI "Space Booker Demo")
 
@@ -49,7 +49,7 @@ When you create a service/space, fill out the required information:
 
 Check out the [example calendar for our test user](https://space-booker.herokuapp.com/account/1/calendar) for reference of how the calendar looks like.
 
-Here's a quick video demonstration of booking calendar (on youtube):
+Here's a quick video demonstration of booking calendar (on youtube, click on the preview image):
 
 [![Space Booker Calendar Demo](http://img.youtube.com/vi/Jfi0Utm0VJ0/0.jpg)](http://www.youtube.com/watch?v=Jfi0Utm0VJ0 "Space Booker Calendar Demo")
 
