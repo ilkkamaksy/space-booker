@@ -212,12 +212,20 @@ const EditService = ({
 	const [redirect, setRedirect] = useState(false)
 
 	const SpaceSchema = Yup.object().shape({
-		name: Yup.string().required('Please enter the name for the space.'),
+		name: Yup.string()
+			.required('Please enter the name for the space.'),
 		description: Yup.string(),
-		maxBookings: Yup.number().required('Please enter maximum number of bookings'),
-		startTime: Yup.string().required('Please enter starting time'),
-		endTime: Yup.string().required('Please enter ending time.'),
-		timeSlotLen: Yup.number().required('Please enter time slot length.'),
+		maxBookings: Yup.number()
+			.positive('Maxbookings can not be negative')
+			.required('Please enter maximum number of bookings'),
+		startTime: Yup.string()
+			.required('Please enter starting time'),
+		endTime: Yup.string()
+			.required('Please enter ending time.'),
+		timeSlotLen: Yup.number()
+			.positive('Timeslot length can not be negative')
+			.required('Please enter time slot length.'),
+
 	})
     
 	const saveMutation = useMutation(saveService, { 
@@ -472,11 +480,11 @@ const EditService = ({
 										onChange={handleChange}
 										onBlur={handleBlur}
 										helperText={
-											touched.description && errors.description
-												? errors.description
+											touched.timeSlotLen && errors.timeSlotLen
+												? errors.timeSlotLen
 												: ''
 										}
-										error={touched.description && errors.description ? true : false}
+										error={touched.timeSlotLen && errors.timeSlotLen ? true : false}
 									/>
 								</Grid>
 
@@ -492,11 +500,11 @@ const EditService = ({
 										onChange={handleChange}
 										onBlur={handleBlur}
 										helperText={
-											touched.description && errors.description
-												? errors.description
+											touched.maxBookings && errors.maxBookings
+												? errors.maxBookings
 												: ''
 										}
-										error={touched.description && errors.description ? true : false}
+										error={touched.maxBookings && errors.maxBookings ? true : false}
 									/>
 								</Grid>
 							</Grid>
